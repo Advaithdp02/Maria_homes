@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import listingRoutes from "./routes/listingRoutes.js";
 import mailRoutes from "./routes/mailRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -15,6 +16,7 @@ app.use(express.json());
 // Routes
 app.use("/api/listings", listingRoutes);
 app.use("/api/mail", mailRoutes);
+app.use("/api/auth", authRoutes);
 
 app.get("/", (req, res) => {
   res.send("Welcome to Maria Homes API");
