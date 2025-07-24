@@ -4,7 +4,7 @@ import "../styles/Renovation.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
-import ImageCarousel from "../components/ImageCarasoul"; 
+import ImageCaraouselSecond from "../components/ImageCaraouselSecond";
 const images = [
   "/assets/img1.jpg",
   "/assets/img2.jpg",
@@ -71,7 +71,7 @@ With an experienced team and an eye for detail, we focus on making the old feel 
         <div className="carousel-container">
     <div>
       
-      <ImageCarousel images={images} />
+      <ImageCaraouselSecond images={images} />
     </div>
     
   </div>
