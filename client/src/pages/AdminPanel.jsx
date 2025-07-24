@@ -1,5 +1,5 @@
 // src/pages/AdminPanel.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -10,31 +10,24 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 const AdminPanel = () => {
   const navigate = useNavigate();
-  const [listingId, setListingId] = useState("");
-  const [deleteId, setDeleteId] = useState("");
+  const [listings, setListings] = useState([]);
 
-  const handleUpdate = () => {
-    if (listingId.trim()) {
-      navigate(`/update-listing/${listingId}`);
-    } else {
-      alert("Please enter a valid ID.");
-    }
-  };
+  // Fetch all listings
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/api/listings`)
+      .then((res) => setListings(res.data))
+      .catch((err) => console.error("Failed to fetch listings:", err));
+  }, []);
 
-  const handleDelete = async () => {
-    if (!deleteId.trim()) {
-      alert("Please enter a valid ID.");
-      return;
-    }
-
+  const handleDelete = async (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this listing?");
     if (!confirmDelete) return;
 
     try {
-      const res = await axios.delete(`${API_URL}/api/listings/${deleteId}`);
+      await axios.delete(`${API_URL}/api/listings/${id}`);
       alert("Listing deleted successfully!");
-      setDeleteId("");
-      console.log(res.data)
+      setListings((prev) => prev.filter((listing) => listing._id !== id));
     } catch (error) {
       console.error("Error deleting listing:", error);
       alert("Failed to delete listing.");
@@ -49,26 +42,55 @@ const AdminPanel = () => {
         <div className="admin-buttons">
           <button onClick={() => navigate("/register")}>Register User</button>
           <button onClick={() => navigate("/add-listing")}>Add Listing</button>
+        </div>
+      </div>
 
-          <div className="update-section">
-            <input
-              type="text"
-              placeholder="Enter Listing ID"
-              value={listingId}
-              onChange={(e) => setListingId(e.target.value)}
-            />
-            <button onClick={handleUpdate}>Update Listing</button>
-          </div>
+      {/* Table outside the container */}
+      <div className="admin-table-wrapper">
+        <h2 style={{ textAlign: "center", marginTop: "20px" }}>All Listings</h2>
+        <div className="table-scroll">
+          <table className="admin-table">
+  <thead>
+    <tr>
+      <th>Image</th>
+      <th>Title</th>
+      <th>Location</th>
+      <th>Short Description</th>
+      <th>Update</th>
+      <th>Delete</th>
+    </tr>
+  </thead>
+  <tbody>
+    {listings.map((listing) => (
+      <tr key={listing._id}>
+        <td>
+          <img
+            src={listing.images?.[0] || "/assets/placeholder.png"} // fallback image
+            alt={listing.title}
+            className="admin-listing-img"
+          />
+        </td>
+        <td>{listing.title}</td>
+        <td>{listing.location}</td>
+        <td>{listing.shortDescription}</td>
+        <td>
+          <button onClick={() => navigate(`/update-listing/${listing._id}`)}>Update</button>
+        </td>
+        <td>
+          <button onClick={() => handleDelete(listing._id)} className="delete-btn">
+            Delete
+          </button>
+        </td>
+      </tr>
+    ))}
+    {listings.length === 0 && (
+      <tr>
+        <td colSpan="6" style={{ textAlign: "center" }}>No listings found.</td>
+      </tr>
+    )}
+  </tbody>
+</table>
 
-          <div className="update-section">
-            <input
-              type="text"
-              placeholder={`Enter ID to Delete`}
-              value={deleteId}
-              onChange={(e) => setDeleteId(e.target.value)}
-            />
-            <button onClick={handleDelete} className="delete-btn">Delete Listing</button>
-          </div>
         </div>
       </div>
       <Footer />

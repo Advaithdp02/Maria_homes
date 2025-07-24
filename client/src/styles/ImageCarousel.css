@@ -1,94 +1,95 @@
-.carousel-wrapper {
+/* Carousel Container */
+.carousel-container {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 80vh;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.nav-button-imagee {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: #5E503F;
-  color: white;
-  border: none;
-  padding: 12px 16px;
-  font-size: 24px;
-  cursor: pointer;
-  border-radius: 8px;
-  z-index: 10;
-  transition: background-color 0.3s ease;
-}
-
-
-
-.nav-button-imagee:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.nav-prev {
-  left: 10px;
-}
-
-.nav-next {
-  right: 10px;
-}
-
-.carousel-track {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
   overflow: hidden;
-  width: 60%;
-  height: 400px;
-  border-radius: 12px;
-  position: relative;
-  margin: 0 20px;
 }
 
+/* Individual Slide */
+.carousel-slide {
+  position: relative;
+}
+
+/* Image Styling */
 .carousel-img {
   width: 100%;
-  height: 100%;
+  height: auto;
+  max-height: 80vh;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: 10px;
 }
 
-.play-pause-button {
-  position: absolute;
-  bottom: 30px;
-  background: #fff;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
+/* Navigation Arrows (Desktop) */
+.slick-prev,
+.slick-next {
   z-index: 10;
-  font-size: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  width: 40px;
+  height: 40px;
+  background-color: rgba(0, 0, 0, 0.5); /* semi-transparent background */
+  border-radius: 50%;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  color: white;
 }
 
-/* Responsive */
+.slick-prev {
+  position: absolute;
+  top: 50%;
+  left: -50px;
+  transform: translateY(-50%);
+}
+
+.slick-next {
+  position: absolute;
+  top: 50%;
+  right: -50px;
+  transform: translateY(-50%);
+}
+
+/* Mobile Styles */
 @media (max-width: 768px) {
-  .carousel-wrapper {
-    flex-direction: column;
-    padding: 1rem;
-    height: auto;
-    touch-action: pan-y;
+  /* Make container full width */
+  .carousel-container {
+    max-width: none;
+    margin: 0;
+    padding: 0;
   }
 
-  .carousel-track {
-    width: 100%;
-    height: auto;
-  }
-
+  /* Full height image */
   .carousel-img {
     width: 100%;
-    height: auto;
-    object-fit: contain;
-    border-radius: 12px;
+    height: 100vh;
+    max-height: none;
+    object-fit: cover;
+    border-radius: 0;
   }
 
-  .play-pause-button {
-    display: none;
+  /* Arrows over the image */
+  .slick-prev,
+  .slick-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+  }
+
+  .slick-prev {
+    left: 10px;
+  }
+
+  .slick-next {
+    right: 10px;
+  }
+
+  /* Prevent horizontal scroll */
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
   }
 }
