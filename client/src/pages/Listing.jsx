@@ -155,7 +155,7 @@ const Listing = () => {
               value={selectedArea}
               onChange={(e) => setSelectedArea(e.target.value)}
             />
-            <span>Min Area: {selectedArea} sq.ft</span>
+            <span>Min Area: {selectedArea} cent</span>
             <input
               type="range"
               min={plotFilters.price.min}
