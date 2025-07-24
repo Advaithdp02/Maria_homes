@@ -57,24 +57,56 @@ const Listing = () => {
   }, []);
 
   const filteredListings = listings.filter((item) => {
-    if (item.type !== activeType) return false;
+  if (item.type !== activeType) return false;
 
-    if (activeType === "house") {
-      if (selectedBedrooms && Number(item.bedrooms) !== Number(selectedBedrooms)) return false;
-      if (selectedBathrooms && Number(item.bathrooms) !== Number(selectedBathrooms)) return false;
-      if (selectedFloors && Number(item.floors) !== Number(selectedFloors)) return false;
-      if (carParking && Number(item.carParking) !== Number(carParking)) return false;
-      if (selectedPrice && Number(item.price) > Number(selectedPrice)) return false;
-      if (selectedArea && Number(item.area) < Number(selectedArea)) return false;
-    }
+  if (activeType === "house") {
+    if (
+      selectedBedrooms &&
+      !(
+        (selectedBedrooms === "5+" && Number(item.bedrooms) >= 5) ||
+        Number(item.bedrooms) === Number(selectedBedrooms)
+      )
+    )
+      return false;
 
-    if (activeType === "plot") {
-      if (selectedArea && Number(item.area) < Number(selectedArea)) return false;
-      if (selectedPrice && Number(item.price) > Number(selectedPrice)) return false;
-    }
+    if (
+      selectedBathrooms &&
+      !(
+        (selectedBathrooms === "5+" && Number(item.bathrooms) >= 5) ||
+        Number(item.bathrooms) === Number(selectedBathrooms)
+      )
+    )
+      return false;
 
-    return true;
-  });
+    if (
+      selectedFloors &&
+      !(
+        (selectedFloors === "5+" && Number(item.floors) >= 5) ||
+        Number(item.floors) === Number(selectedFloors)
+      )
+    )
+      return false;
+
+    if (
+      carParking &&
+      !(
+        (carParking === "5+" && Number(item.carParking) >= 5) ||
+        Number(item.carParking) === Number(carParking)
+      )
+    )
+      return false;
+
+    if (selectedPrice && Number(item.price) > Number(selectedPrice)) return false;
+    if (selectedArea && Number(item.area) < Number(selectedArea)) return false;
+  }
+
+  if (activeType === "plot") {
+    if (selectedArea && Number(item.area) < Number(selectedArea)) return false;
+    if (selectedPrice && Number(item.price) > Number(selectedPrice)) return false;
+  }
+
+  return true;
+});
 
   return (
     <div className="page-wrapper">
@@ -104,68 +136,81 @@ const Listing = () => {
 
         {/* Filter Section */}
         {activeType === "house" ? (
-          <div className="filters-row">
-            <select value={selectedBedrooms} onChange={(e) => setSelectedBedrooms(e.target.value)}>
-              <option value="">Bedrooms</option>
-              {[1, 2, 3, 4, 5].map((b) => (
-                <option key={b} value={b}>{b} BHK</option>
-              ))}
-            </select>
-            <select value={selectedBathrooms} onChange={(e) => setSelectedBathrooms(e.target.value)}>
-              <option value="">Bathrooms</option>
-              {[1, 2, 3].map((b) => (
-                <option key={b} value={b}>{b} Baths</option>
-              ))}
-            </select>
-            <select value={selectedFloors} onChange={(e) => setSelectedFloors(e.target.value)}>
-              <option value="">Floors</option>
-              {[1, 2, 3].map((f) => (
-                <option key={f} value={f}>{f} {f === 1 ? "floor" : "floors"}</option>
-              ))}
-            </select>
-            <select value={carParking} onChange={(e) => setCarParking(e.target.value)}>
-              <option value="">Car Parking</option>
-              {[1, 2, 3, 4, 5].map((b) => (
-                <option key={b} value={b}>{b} Car Parking</option>
-              ))}
-            </select>
-            <input
-              type="range"
-              min={priceRange.min}
-              max={priceRange.max}
-              value={selectedPrice}
-              onChange={(e) => setSelectedPrice(e.target.value)}
-            />
-            <span>Up to {numberToCurrency(selectedPrice)}</span>
-            <input
-              type="range"
-              min={plotFilters.area.min}
-              max={plotFilters.area.max}
-              value={selectedArea}
-              onChange={(e) => setSelectedArea(e.target.value)}
-            />
-            <span>Min Area: {selectedArea} sq.ft</span>
-          </div>
-        ) : (
-          <div className="filters-row">
-            <input
-              type="range"
-              min={plotFilters.area.min}
-              max={plotFilters.area.max}
-              value={selectedArea}
-              onChange={(e) => setSelectedArea(e.target.value)}
-            />
-            <span>Min Area: {selectedArea} cent</span>
-            <input
-              type="range"
-              min={plotFilters.price.min}
-              max={plotFilters.price.max}
-              value={selectedPrice}
-              onChange={(e) => setSelectedPrice(e.target.value)}
-            />
-            <span>Max Price: {numberToCurrency(selectedPrice)}</span>
-          </div>
-        )}
+  <div className="filters-row">
+    <select value={selectedBedrooms} onChange={(e) => setSelectedBedrooms(e.target.value)}>
+      <option value="">Bedrooms</option>
+      {[1, 2, 3, 4].map((b) => (
+        <option key={b} value={b}>{b} BHK</option>
+      ))}
+      <option value="5+">5+ BHK</option>
+    </select>
+
+    <select value={selectedBathrooms} onChange={(e) => setSelectedBathrooms(e.target.value)}>
+      <option value="">Bathrooms</option>
+      {[1, 2, 3, 4].map((b) => (
+        <option key={b} value={b}>{b} Baths</option>
+      ))}
+      <option value="5+">5+ Baths</option>
+    </select>
+
+    <select value={selectedFloors} onChange={(e) => setSelectedFloors(e.target.value)}>
+      <option value="">Floors</option>
+      {[1, 2, 3, 4].map((f) => (
+        <option key={f} value={f}>
+          {f} {f === 1 ? "floor" : "floors"}
+        </option>
+      ))}
+      <option value="5+">5+ floors</option>
+    </select>
+
+    <select value={carParking} onChange={(e) => setCarParking(e.target.value)}>
+      <option value="">Car Parking</option>
+      {[1, 2, 3, 4].map((p) => (
+        <option key={p} value={p}>{p} Car Parking</option>
+      ))}
+      <option value="5+">5+ Car Parking</option>
+    </select>
+
+    <input
+      type="range"
+      min={priceRange.min}
+      max={priceRange.max}
+      value={selectedPrice}
+      onChange={(e) => setSelectedPrice(e.target.value)}
+    />
+    <span>Up to {numberToCurrency(selectedPrice)}</span>
+
+    <input
+      type="range"
+      min={plotFilters.area.min}
+      max={plotFilters.area.max}
+      value={selectedArea}
+      onChange={(e) => setSelectedArea(e.target.value)}
+    />
+    <span>Min Area: {selectedArea} sq.ft</span>
+  </div>
+) : (
+  <div className="filters-row">
+    <input
+      type="range"
+      min={plotFilters.area.min}
+      max={plotFilters.area.max}
+      value={selectedArea}
+      onChange={(e) => setSelectedArea(e.target.value)}
+    />
+    <span>Min Area: {selectedArea} cent</span>
+
+    <input
+      type="range"
+      min={plotFilters.price.min}
+      max={plotFilters.price.max}
+      value={selectedPrice}
+      onChange={(e) => setSelectedPrice(e.target.value)}
+    />
+    <span>Max Price: {numberToCurrency(selectedPrice)}</span>
+  </div>
+)}
+
 
         {/* Listings */}
         <div className="listings-grid">
