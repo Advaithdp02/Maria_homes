@@ -9,12 +9,14 @@ import {
   deleteImage,
   updateListing,
   deleteListing,
+  getFeaturedListings,
 } from "../controllers/listingController.js";
 
 const router = express.Router();
 const upload = multer({ storage });
 
 router.get("/", getAllListings);
+router.get("/featured", getFeaturedListings);
 router.get("/:id", getListingById);
 router.post("/", upload.array("images", 10), createListing);
 router.get("/filters", getFilteredListings);

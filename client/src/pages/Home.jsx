@@ -54,7 +54,7 @@ const Home = () => {
 
     // Fetch only featured listings
     axios
-      .get(`${API_URL}/api/listings?featured=true`)
+      .get(`${API_URL}/api/listings/featured`)
       .then((res) => setFeaturedListings(res.data.slice(0, 3)))
       .catch((err) => console.error("Failed to fetch featured listings:", err));
   }, []);

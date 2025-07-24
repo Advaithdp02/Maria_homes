@@ -170,3 +170,13 @@ export const deleteListing = async (req, res) => {
     res.status(500).json({ error: "Failed to delete listing" });
   }
 };
+// ✅ Get Featured Listings Only
+export const getFeaturedListings = async (req, res) => {
+  try {
+    const listings = await Listing.find({ featured: true });
+    res.json(listings);
+  } catch (err) {
+    console.error("Featured fetch error:", err);
+    res.status(500).json({ error: "Failed to fetch featured listings" });
+  }
+};
