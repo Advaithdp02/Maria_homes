@@ -79,9 +79,7 @@ const ImageCarousel = ({ media }) => {
 
   return (
     <div className="carousel-wrapper" ref={carouselRef}>
-      {!isMobile && (
-        <button onClick={prevSlide} className="nav-button-imagee">‹</button>
-      )}
+      <button onClick={prevSlide} className="nav-button-imagee nav-prev">‹</button>
 
       <div className="carousel-track">
         {isVideo(currentMedia) ? (
@@ -102,9 +100,7 @@ const ImageCarousel = ({ media }) => {
         )}
       </div>
 
-      {!isMobile && (
-        <button onClick={nextSlide} className="nav-button-imagee">›</button>
-      )}
+      <button onClick={nextSlide} className="nav-button-imagee nav-next">›</button>
 
       {!isMobile && isVideo(currentMedia) && (
         <button onClick={togglePlayPause} className="play-pause-button">

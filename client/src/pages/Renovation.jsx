@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 import ImageCaraouselSecond from "../components/ImageCaraouselSecond";
+import { useNavigate } from "react-router-dom";
 const images = [
   "/assets/img1.jpg",
   "/assets/img2.jpg",
@@ -38,7 +39,7 @@ const renovationSteps = [
 ];
 
 const Renovation = () => {
-    
+    const navigate = useNavigate();
 
   return (
     <div className="page-wrapper">
@@ -80,7 +81,7 @@ With an experienced team and an eye for detail, we focus on making the old feel 
   <div className="dream-home-container">
     {/* Column 1: Buttons */}
     <div className="dream-home-left">
-      <button className="dream-btn">Contact Us</button>
+      <button className="dream-btn" onClick={() => navigate('/contact')}>Contact Us</button>
       <button className="dream-btn whatsapp" onClick={() => window.open("https://wa.me/918075269449", "_blank")}>Chat on Whatsapp</button>
     </div>
 
