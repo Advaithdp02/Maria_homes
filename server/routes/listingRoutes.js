@@ -8,6 +8,7 @@ import {
   getFilteredListings,
   deleteImage,
   updateListing,
+  deleteListing,
 } from "../controllers/listingController.js";
 
 const router = express.Router();
@@ -18,5 +19,6 @@ router.get("/:id", getListingById);
 router.post("/", upload.array("images", 10), createListing);
 router.get("/filters", getFilteredListings);
 router.delete("/:id/image", deleteImage);
+router.delete("/:id", deleteListing);
 router.put("/:id", upload.array("images", 10), updateListing);
 export default router;
