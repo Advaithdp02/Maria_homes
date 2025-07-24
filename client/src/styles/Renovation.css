@@ -1,0 +1,258 @@
+/* =================== Construction Hero Section =================== */
+.construction-hero {
+  margin-top: 110px;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.construction-hero h1 {
+  font-size: 2.5rem;
+  color: #5E503F;
+  padding: 10px;
+}
+
+.construction-hero p {
+  font-size: 1.2rem;
+  color: #444;
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: 'Times New Roman', Times, serif;
+  text-align: left;
+  line-height: 30px;
+  padding: 0 1rem;
+}
+
+/* =================== Construction Process Section =================== */
+.process-section h2 {
+  font-size: 2.5rem;
+  color: #5E503F;
+  padding: 20px;
+  text-align: center;
+}
+
+.process-cards {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding: 0 1rem;
+}
+
+.process-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.step-card {
+  background-color: #0071BD;
+  opacity: 0.52;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: -20px 10px rgba(13, 12, 12, 0.11);
+  width: 700px;
+  max-width: 100%;
+  text-align: center;
+  z-index: 2;
+  margin-bottom: 10px;
+}
+
+.step-card h3 {
+  font-size: 1.5rem;
+  color: #FFFFFF;
+  margin-bottom: 1rem;
+}
+
+.step-card p {
+  color: #FFFFFF;
+  opacity: 0.67;
+  font-size: 1rem;
+}
+
+.vertical-line {
+  width: 2px;
+  height: 50px;
+  background-color: #FFFFFF;
+  margin: 0 auto;
+  z-index: 1;
+  border-radius: 1px;
+}
+
+
+
+
+/* =================== Dream Home CTA Section =================== */
+.dream-home-section {
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.dream-home-heading {
+  font-size: 2.5rem;
+  color: #5E503F;
+  margin-bottom: 2rem;
+}
+
+.dream-home-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.dream-home-left {
+  margin-bottom: 20px;
+  align-items: flex-end !important;
+}
+
+.dream-home-left,
+.dream-home-right {
+  flex: 1;
+  align-self: end;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.dream-btn {
+  display: block;
+  width: 200px;
+  padding: 0.75rem 1.5rem;
+  margin: 1rem 0;
+  background-color: #5E503F;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.dream-btn:hover {
+  background-color: #0077ff;
+}
+
+.whatsapp {
+  background-color: #51C24B;
+}
+
+.vertical-divider {
+  width: 2px;
+  background-color: #C6AC8E;
+  height: 50%;
+  min-height: 220px;
+  margin-top: 1rem;
+}
+
+.visit-text {
+  width: 250px;
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  color: #5E503F;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* =================== Responsive Styles =================== */
+@media (max-width: 768px) {
+  .construction-hero h1 {
+    font-size: 2rem;
+  }
+
+  .construction-hero p {
+    font-size: 1rem;
+    text-align: justify;
+    padding: 0;
+  }
+
+  .process-section h2 {
+    font-size: 2rem;
+  }
+
+  .carousel-img {
+    height: 200px;
+  }
+
+  .dream-home-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    width: 100%;
+    padding: 0 1rem;
+  }
+
+  .dream-home-left,
+  .dream-home-right {
+    width: 100%;
+    align-items: center;
+    text-align: center;
+    padding: 0 1rem;
+  }
+
+  .dream-btn {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    max-width: 250px;
+  }
+
+  .vertical-divider {
+    width: 100%;
+    height: 2px;
+    min-height: unset;
+    margin: 1rem 0;
+  }
+
+  .visit-text {
+    width: 100%;
+    text-align: center;
+    font-size: 1.1rem;
+  }
+
+  iframe {
+    width: 100% !important;
+    max-width: 100%;
+    height: 250px;
+    border-radius: 12px;
+  }
+
+  .step-card {
+    width: 100%;
+    padding: 1.5rem;
+  }
+}
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0%);
+    opacity: 0.52;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0%);
+    opacity: 0.52;
+  }
+}
+
+
+.process-step:nth-child(odd) .step-card {
+  animation: slideInLeft 0.8s ease forwards;
+}
+
+.process-step:nth-child(even) .step-card {
+  animation: slideInRight 0.8s ease forwards;
+}
+

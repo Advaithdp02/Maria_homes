@@ -1,0 +1,109 @@
+/* Base layout */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #C6AC8E;
+  padding: 1rem 2rem 0 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+}
+
+/* Logo */
+.logo-img {
+  height: 80px;
+  width: 100px;
+  object-fit: contain;
+}
+
+/* Center nav buttons (desktop only) */
+.nav-center {
+  display: flex;
+  gap: 1rem;
+}
+
+.nav-button,
+.contact-btn-nav {
+  background-color: #666;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+.contact-btn{
+  width: 150px;
+}
+.nav-button-mobile,
+.contact-btn-mobile {
+  background-color: #666;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  margin-bottom: 10px;
+    width: 100%;
+    text-align: center;
+}
+
+.nav-button:hover,
+.contact-btn:hover {
+  background-color: #0077ff;
+}
+
+/* Right (contact and hamburger) */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+
+/* Hamburger hidden by default (only for mobile) */
+.hamburger {
+  display: none;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+/* Mobile dropdown menu */
+.mobile-menu {
+  display: none;
+}
+
+/* Responsive layout */
+@media (max-width: 768px) {
+  .nav-center {
+    display: none;
+  }
+  
+  .contact-btn-nav {
+    display: none;
+  }
+    .hamburger {
+        display: block;
+    }
+
+  .mobile-menu {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    background-color: #C6AC8E;
+    padding: 2rem;
+    position: absolute;
+    top: 80px;
+    left: 0;
+    width: 100%;
+    z-index: 99;
+  }
+
+  .mobile-menu.open {
+    display: flex;
+  }
+  
+}
