@@ -13,6 +13,7 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "maria_homes_media",
+    resource_type: "auto",
     allowed_formats: ["jpg", "jpeg", "png", "mp4", "mov", "avi", "mkv", "webm"],
   },
 });

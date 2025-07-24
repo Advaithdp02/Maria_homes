@@ -147,16 +147,24 @@ export const updateListing = async (req, res) => {
 
 export const deleteListing = async (req, res) => {
   try {
-    const listing = await Listing.findByIdAndDelete(req.params.id);
+    const listing = await Listing.findById(req.params.id);
     if (!listing) return res.status(404).json({ error: "Listing not found" });
 
-   
-    listing.images.forEach(async (url) => {
-      const publicId = url.split("/").pop().split(".")[0];
-      await cloudinary.uploader.destroy(publicId);
-    });
+    // Delete images from Cloudinary (optional)
+    if (listing.images && listing.images.length > 0) {
+      for (const url of listing.images) {
+        try {
+          const publicId = url.split("/").pop().split(".")[0];
+          await cloudinary.uploader.destroy(publicId);
+        } catch (err) {
+          console.error(`Failed to delete image ${url}:`, err.message);
+        }
+      }
+    }
 
+    await Listing.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "Listing deleted successfully." });
+
   } catch (error) {
     console.error("Delete error:", error);
     res.status(500).json({ error: "Failed to delete listing" });

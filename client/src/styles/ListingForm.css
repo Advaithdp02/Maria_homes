@@ -90,3 +90,48 @@ input[type="file"] {
     font-size: 15px;
   }
 }
+.media-preview {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.preview-item img,
+.preview-item video {
+  border-radius: 8px;
+  max-height: 150px;
+}
+.media-preview {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.preview-item {
+  position: relative;
+  display: inline-block;
+}
+
+.preview-item img,
+.preview-item video {
+  border-radius: 8px;
+  max-height: 150px;
+  display: block;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+}
