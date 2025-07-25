@@ -23,7 +23,7 @@ const Listing = () => {
   const [priceRange, setPriceRange] = useState({ min: 0, max: 25000000 });
   const [plotFilters, setPlotFilters] = useState({
     area: { min: 0, max: 10000 },
-    price: { min: 0, max: 25000000 },
+    price: { min: 0, max: 250000000 },
   });
 
   const navigate = useNavigate();
