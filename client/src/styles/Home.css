@@ -330,6 +330,14 @@ html {
   color: #C6AC8E;
   font-size: 1rem;
 }
+.featured-location {
+  font-weight: 500;
+  color: #666;
+  margin-bottom: 0.5rem;
+  opacity: 0.8;
+  margin-top: 10px;
+}
+
 @media (max-width: 768px) {
   .start-section {
     background-image:  linear-gradient(rgba(43, 41, 41, 0.4), rgba(243, 243, 243, 0.4)),url('startingHouse.png');

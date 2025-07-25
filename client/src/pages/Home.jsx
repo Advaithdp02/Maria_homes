@@ -154,25 +154,30 @@ const Home = () => {
 
         {/* Featured */}
         <section id="featured" className="featured-section">
-          <h2 className="section-title">Featured Listings</h2>
-          <p className="section-description">A glimpse into our most trusted work — beautifully crafted homes, thoughtful renovations, and select real estate listings that reflect our standard of excellence.</p>
-          <div className="featured-cards-container">
-            {featuredListings.map((listing, index) => (
-              <motion.div
-                key={listing._id}
-                ref={[fRef1, fRef2, fRef3][index]}
-                className="featured-card"
-                initial={{ opacity: 0, y: 40 }}
-                animate={[fInView1, fInView2, fInView3][index] ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: index * 0.2 }}
-              >
-                <img src={listing.images?.[0]} alt={listing.title} />
-                <p>{listing.shortDescription}</p>
-                <Link to={`/listing/${listing._id}`} className="featured-btn">View More</Link>
-              </motion.div>
-            ))}
-          </div>
-        </section>
+  <h2 className="section-title">Featured Listings</h2>
+  <p className="section-description">
+    A glimpse into our most trusted work — beautifully crafted homes, thoughtful renovations, and select real estate listings that reflect our standard of excellence.
+  </p>
+  <div className="featured-cards-container">
+    {featuredListings.map((listing, index) => (
+      <motion.div
+        key={listing._id}
+        ref={[fRef1, fRef2, fRef3][index]}
+        className="featured-card"
+        initial={{ opacity: 0, y: 40 }}
+        animate={[fInView1, fInView2, fInView3][index] ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.5, delay: index * 0.2 }}
+      >
+        <img src={listing.images?.[0]} alt={listing.title} />
+        <h3 className="featured-title">{listing.title}</h3>
+        <p className="featured-location">{listing.location}</p> {/* 👈 Added location */}
+        <p>{listing.shortDescription}</p>
+        <Link to={`/listing/${listing._id}`} className="featured-btn">View More</Link>
+      </motion.div>
+    ))}
+  </div>
+</section>
+
 
         {/* Testimonials */}
         <section className="testimonial-section" id="reviews">
