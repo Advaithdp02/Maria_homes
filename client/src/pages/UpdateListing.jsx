@@ -26,17 +26,22 @@ const UpdateListing = () => {
     images: [],
   });
 
-  const [media, setMedia] = useState([]); // for new uploads
-  const [loading, setLoading] = useState(false); // 👈 loading state
+  const [media, setMedia] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchListing = async () => {
       try {
         const res = await axios.get(`${API_URL}/api/listings/${id}`);
         const listing = res.data;
+
         if (Array.isArray(listing.features)) {
-          listing.features = listing.features.join(",");
+          const cleaned = listing.features.filter((feature) => {
+            return !/(Bedroom|Bedrooms|Bathroom|Bathrooms|Car Parking)/i.test(feature);
+          });
+          listing.features = cleaned.join(",");
         }
+
         setForm(listing);
       } catch (err) {
         console.error("Error fetching listing:", err);
@@ -61,12 +66,28 @@ const UpdateListing = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (loading) return; // 👈 prevent double clicks
+    if (loading) return;
     setLoading(true);
 
     const data = new FormData();
-    const featureListed = [form.bedrooms, form.bathrooms, form.carParking];
-    const featuredArray = form.features.split(",").map((f) => f.trim());
+
+    const featureListed = [];
+
+    if (form.bedrooms) {
+      featureListed.push(`${form.bedrooms} ${form.bedrooms === "1" ? "Bedroom" : "Bedrooms"}`);
+    }
+    if (form.bathrooms) {
+      featureListed.push(`${form.bathrooms} ${form.bathrooms === "1" ? "Bathroom" : "Bathrooms"}`);
+    }
+    if (form.carParking) {
+      featureListed.push(`${form.carParking} Car Parking`);
+    }
+
+    const featuredArray = form.features
+      .split(",")
+      .map((f) => f.trim())
+      .filter((f) => f);
+
     const featuresArray = [...featuredArray, ...featureListed];
 
     for (const key in form) {
@@ -79,7 +100,7 @@ const UpdateListing = () => {
     });
 
     try {
-      const res = await axios.put(`${API_URL}/api/listings/${id}`, data, {
+      await axios.put(`${API_URL}/api/listings/${id}`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -90,7 +111,7 @@ const UpdateListing = () => {
       console.error("Update failed:", err);
       alert("Error updating listing.");
     } finally {
-      setLoading(false); // 👈 reset loading
+      setLoading(false);
     }
   };
 
@@ -126,14 +147,54 @@ const UpdateListing = () => {
         </select>
 
         <input type="number" name="area" placeholder="Area (sqft)" value={form.area} onChange={handleChange} />
-        <input type="text" name="features" placeholder='Features (e.g. AC,Pool)' value={form.features} onChange={handleChange} />
+
+        <input type="text" name="features" placeholder="Features (e.g. AC, Pool)" value={form.features} onChange={handleChange} />
+
         <textarea name="shortDescription" placeholder="Short Description" value={form.shortDescription} onChange={handleChange}></textarea>
         <textarea name="longDescription" placeholder="Long Description" value={form.longDescription} onChange={handleChange}></textarea>
 
-        <input type="number" name="bedrooms" placeholder="Bedrooms" value={form.bedrooms} onChange={handleChange} />
-        <input type="number" name="bathrooms" placeholder="Bathrooms" value={form.bathrooms} onChange={handleChange} />
-        <input type="number" name="floors" placeholder="Floors" value={form.floors} onChange={handleChange} />
-        <input type="number" name="carParking" placeholder="Car Parking" value={form.carParking} onChange={handleChange} />
+        {/* Updated descriptive inputs */}
+        <input
+          type="text"
+          name="bedrooms"
+          placeholder="Bedrooms"
+          value={form.bedrooms ? `${form.bedrooms} BHK` : ""}
+          onChange={(e) => {
+            const value = e.target.value.replace(/\D/g, "");
+            setForm((prev) => ({ ...prev, bedrooms: value }));
+          }}
+        />
+        <input
+  type="text"
+  name="floors"
+  placeholder="Floors"
+  value={form.floors ? `${form.floors} Floor${form.floors === "1" ? "" : "s"}` : ""}
+  onChange={(e) => {
+    const value = e.target.value.replace(/\D/g, ""); // remove non-numbers
+    setForm((prev) => ({ ...prev, floors: value }));
+  }}
+/>
+
+        <input
+          type="text"
+          name="floors"
+          placeholder="Floors"
+          value={form.floors ? `${form.floors} Floor${form.floors === "1" ? "" : "s"}` : ""}
+          onChange={(e) => {
+            const value = e.target.value.replace(/\D/g, "");
+            setForm((prev) => ({ ...prev, floors: value }));
+          }}
+        />
+        <input
+          type="text"
+          name="carParking"
+          placeholder="Car Parking"
+          value={form.carParking ? `${form.carParking} Car Parking` : ""}
+          onChange={(e) => {
+            const value = e.target.value.replace(/\D/g, "");
+            setForm((prev) => ({ ...prev, carParking: value }));
+          }}
+        />
 
         <label>
           <input type="checkbox" name="featured" checked={form.featured} onChange={handleChange} />
@@ -142,25 +203,26 @@ const UpdateListing = () => {
 
         {/* Media preview */}
         <div className="media-preview">
-          {form.images && form.images.length > 0 && form.images.map((url, index) => (
-            <div key={index} className="preview-item">
-              {isVideo(url) ? (
-                <video src={url} controls width="200" />
-              ) : (
-                <img src={url} alt={`media-${index}`} width="200" />
-              )}
-              <button
-                type="button"
-                onClick={() => handleRemoveMedia(index)}
-                className="remove-btn"
-              >
-                ✕
-              </button>
-            </div>
-          ))}
+          {form.images &&
+            form.images.length > 0 &&
+            form.images.map((url, index) => (
+              <div key={index} className="preview-item">
+                {isVideo(url) ? (
+                  <video src={url} controls width="200" />
+                ) : (
+                  <img src={url} alt={`media-${index}`} width="200" />
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveMedia(index)}
+                  className="remove-btn"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
         </div>
 
-        {/* Upload new media */}
         <input type="file" multiple onChange={handleMediaChange} accept="image/*,video/*" />
 
         <button type="submit" disabled={loading}>

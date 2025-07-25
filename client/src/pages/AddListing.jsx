@@ -88,11 +88,50 @@ const AddListing = () => {
         <input type="text" name="features" placeholder="Features (comma separated)" onChange={handleChange} />
         <textarea name="shortDescription" placeholder="Short Description" onChange={handleChange}></textarea>
         <textarea name="longDescription" placeholder="Long Description" onChange={handleChange}></textarea>
-        <input type="number" name="bedrooms" placeholder="Bedrooms" onChange={handleChange} />
-        <input type="number" name="bathrooms" placeholder="Bathrooms" onChange={handleChange} />
-        <input type="number" name="floors" placeholder="Floors" onChange={handleChange} />
-        <input type="number" name="carParking" placeholder="Car Parking" onChange={handleChange} />
-        
+        <input
+  type="text"
+  name="bedrooms"
+  placeholder="Bedrooms"
+  value={formData.bedrooms ? `${formData.bedrooms} BHK` : ""}
+  onChange={(e) => {
+    const value = e.target.value.replace(/\D/g, ""); // Allow only digits
+    setFormData((prev) => ({ ...prev, bedrooms: value }));
+  }}
+/>
+
+<input
+  type="text"
+  name="bathrooms"
+  placeholder="Bathrooms"
+  value={formData.bathrooms ? `${formData.bathrooms} Bathroom${formData.bathrooms === "1" ? "" : "s"}` : ""}
+  onChange={(e) => {
+    const value = e.target.value.replace(/\D/g, "");
+    setFormData((prev) => ({ ...prev, bathrooms: value }));
+  }}
+/>
+
+<input
+  type="text"
+  name="floors"
+  placeholder="Floors"
+  value={formData.floors ? `${formData.floors} Floor${formData.floors === "1" ? "" : "s"}` : ""}
+  onChange={(e) => {
+    const value = e.target.value.replace(/\D/g, "");
+    setFormData((prev) => ({ ...prev, floors: value }));
+  }}
+/>
+
+<input
+  type="text"
+  name="carParking"
+  placeholder="Car Parking"
+  value={formData.carParking ? `${formData.carParking} Car Parking` : ""}
+  onChange={(e) => {
+    const value = e.target.value.replace(/\D/g, "");
+    setFormData((prev) => ({ ...prev, carParking: value }));
+  }}
+/>
+
         <label>
           <input type="checkbox" name="featured" checked={formData.featured} onChange={handleChange} />
           Featured
