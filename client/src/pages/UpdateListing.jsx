@@ -73,7 +73,7 @@ const UpdateListing = () => {
     });
 
     try {
-      const res = await axios.put(`http://localhost:3030/api/listings/${id}`, data, {
+      const res = await axios.put(`${API_URL}/api/listings/${id}`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
