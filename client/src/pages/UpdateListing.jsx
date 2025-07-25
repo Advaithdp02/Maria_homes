@@ -3,6 +3,7 @@ import axios from "axios";
 import "../styles/ListingForm.css";
 import { useNavigate, useParams } from "react-router-dom";
 
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3030";
 const UpdateListing = () => {
   const { id } = useParams();
   const [form, setForm] = useState({
@@ -27,7 +28,7 @@ const UpdateListing = () => {
   useEffect(() => {
     const fetchListing = async () => {
       try {
-        const res = await axios.get(`http://localhost:3030/api/listings/${id}`);
+        const res = await axios.get(`${API_URL}/api/listings/${id}`);
         const listing = res.data;
         // Convert array to comma string for text input (if needed)
         if (Array.isArray(listing.features)) {
