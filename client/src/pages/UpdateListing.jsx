@@ -59,7 +59,7 @@ const UpdateListing = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData();
-
+    const featureListed=[form.bedrooms,form.bathrooms,form.carParking];
     // Ensure features are array (split by comma)
     const featuresArray = form.features.split(",").map((f) => f.trim());
 
@@ -94,7 +94,7 @@ const UpdateListing = () => {
   const imageUrl = form.images[index];
 
   try {
-    await axios.put(`http://localhost:3030/api/listings/${id}/delete-image`, { imageUrl });
+    await axios.put(`${API_URL}/api/listings/${id}/delete-image`, { imageUrl });
     
     setForm((prev) => ({
       ...prev,
