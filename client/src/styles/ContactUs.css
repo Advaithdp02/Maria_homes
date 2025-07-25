@@ -76,7 +76,17 @@
   transition: background-color 0.3s ease;
   margin-top: 1rem;
 }
-
+.call-now-btn{
+   background-color: #5E503F;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+}
 .whatsapp-btn:hover {
   background-color: #1eb848;
 }
@@ -121,7 +131,7 @@
   }
 
   .send-btn,
-  .whatsapp-btn {
+  .whatsapp-btn,.call-now-btn {
     width: 100%;
     max-width: 300px;
   }

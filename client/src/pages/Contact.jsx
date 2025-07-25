@@ -20,6 +20,12 @@ const ContactUs = () => {
         <div className="alt-contact-section">
           <div className="alt-left">
             <button
+                className="call-now-btn"
+                onClick={() => window.open("tel:+918075269449")}
+              >
+  Call Now
+</button>
+            <button
               className="whatsapp-btn"
               onClick={() => window.open("https://wa.me/918075269449", "_blank")}
             >

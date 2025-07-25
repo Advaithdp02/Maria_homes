@@ -26,6 +26,7 @@ const AddListing = () => {
   });
 
   const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(false); // 👈 loading state
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -41,16 +42,19 @@ const AddListing = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return; // 👈 prevent double click
+    setLoading(true);
+
     try {
       const listingData = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-  if (key === "features") {
-    listingData.append(key, JSON.stringify(value.split(","))); // ← this fixes it
-  } else {
-    listingData.append(key, value);
-  }
-});
 
+      Object.entries(formData).forEach(([key, value]) => {
+        if (key === "features") {
+          listingData.append(key, JSON.stringify(value.split(",")));
+        } else {
+          listingData.append(key, value);
+        }
+      });
 
       images.forEach((file) => {
         listingData.append("images", file);
@@ -61,6 +65,9 @@ const AddListing = () => {
       navigate("/admin");
     } catch (err) {
       console.error("Failed to create listing:", err);
+      alert("Error adding listing.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -71,10 +78,12 @@ const AddListing = () => {
         <input type="text" name="title" placeholder="Title" onChange={handleChange} required />
         <input type="text" name="location" placeholder="Location" onChange={handleChange} required />
         <input type="number" name="price" placeholder="Price" onChange={handleChange} required />
+        
         <select name="type" onChange={handleChange} value={formData.type}>
           <option value="house">House</option>
           <option value="plot">Plot</option>
         </select>
+        
         <input type="number" name="area" placeholder="Area (sqft)" onChange={handleChange} required />
         <input type="text" name="features" placeholder="Features (comma separated)" onChange={handleChange} />
         <textarea name="shortDescription" placeholder="Short Description" onChange={handleChange}></textarea>
@@ -83,13 +92,21 @@ const AddListing = () => {
         <input type="number" name="bathrooms" placeholder="Bathrooms" onChange={handleChange} />
         <input type="number" name="floors" placeholder="Floors" onChange={handleChange} />
         <input type="number" name="carParking" placeholder="Car Parking" onChange={handleChange} />
+        
         <label>
           <input type="checkbox" name="featured" checked={formData.featured} onChange={handleChange} />
           Featured
         </label>
+        
         <input type="file" multiple accept="image/*,video/*" onChange={handleImageChange} />
-        <button type="submit">Add Listing</button>
-        <button className="back" onClick={() => navigate(-1)}>Back</button>
+        
+        <button type="submit" disabled={loading}>
+          {loading ? "Adding..." : "Add Listing"}
+        </button>
+        
+        <button className="back" type="button" onClick={() => navigate(-1)}>
+          Back
+        </button>
       </form>
     </div>
   );

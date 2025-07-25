@@ -11,9 +11,9 @@ const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3030";
 
 export const numberToCurrency = (num) => {
   if (num > 9999999) {
-    return `₹${(num / 1000000).toFixed(1)} Crore`;
+    return `₹${(num / 10000000).toFixed(2)} Crore`;
   }else if (num > 99999) {
-    return `₹${(num / 100000).toFixed(1)} Lakhs`;
+    return `₹${(num / 100000).toFixed(2)} Lakhs`;
   }
 }
 
@@ -42,15 +42,22 @@ const ListingDetail = () => {
     <div className="listing-detail-container">
       
       {/* Description */}
-      <p className="detail-description">{listing.longDescription}</p>
+      
 
       {/* Stats: sqft / price / land area */}
       <div className="detail-cards">
-        <div className="info-box"><strong>{listing.area} Sq.ft</strong><br />Area</div>
+       <div className="info-box">
+  <strong>
+    {listing.area} {listing.type === "plot" ? "Cent" : "Sq.ft"}
+    <br />
+    Area
+  </strong>
+</div>
+
         <div className="info-box"><strong>{numberToCurrency(listing.price)}</strong><br />Price</div>
         <div className="info-box"><strong>{listing.location}</strong><br />Location</div>
       </div>
-
+      
       {/* Features and Map Side by Side */}
       <div className="features-map-wrapper">
         <ul className="feature-list">
@@ -59,7 +66,7 @@ const ListingDetail = () => {
             <li key={i}>{feature}</li>
           ))}
         </ul>
-
+<p className="detail-description">{listing.longDescription}</p>
         <div className="map-box">
           <iframe
             title="listing-location"

@@ -95,3 +95,7 @@
     display: none; /* hides the play button on mobile since native controls are used */
   }
 }
+.nav-button-imagee:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

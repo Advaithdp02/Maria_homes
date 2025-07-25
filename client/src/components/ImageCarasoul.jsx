@@ -79,28 +79,40 @@ const ImageCarousel = ({ media }) => {
 
   return (
     <div className="carousel-wrapper" ref={carouselRef}>
-      <button onClick={prevSlide} className="nav-button-imagee nav-prev">‹</button>
+      <button
+  onClick={prevSlide}
+  className="nav-button-imagee nav-prev"
+  disabled={currentIndex === 0}
+>
+  ‹
+</button>
 
-      <div className="carousel-track">
-        {isVideo(currentMedia) ? (
-          <video
-            ref={(el) => (videoRefs.current[currentIndex] = el)}
-            src={currentMedia}
-            className="carousel-img"
-            muted
-            loop
-            controls={isMobile}
-          />
-        ) : (
-          <img
-            src={currentMedia}
-            alt={`Slide-${currentIndex}`}
-            className="carousel-img"
-          />
-        )}
-      </div>
+<div className="carousel-track">
+  {isVideo(currentMedia) ? (
+    <video
+      ref={(el) => (videoRefs.current[currentIndex] = el)}
+      src={currentMedia}
+      className="carousel-img"
+      muted
+      loop
+      controls={isMobile}
+    />
+  ) : (
+    <img
+      src={currentMedia}
+      alt={`Slide-${currentIndex}`}
+      className="carousel-img"
+    />
+  )}
+</div>
 
-      <button onClick={nextSlide} className="nav-button-imagee nav-next">›</button>
+<button
+  onClick={nextSlide}
+  className="nav-button-imagee nav-next"
+  disabled={currentIndex === media.length - 1}
+>
+  ›
+</button>
 
       {!isMobile && isVideo(currentMedia) && (
         <button onClick={togglePlayPause} className="play-pause-button">
