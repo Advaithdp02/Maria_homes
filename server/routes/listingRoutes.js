@@ -18,11 +18,11 @@ const upload = multer({ storage });
 router.get("/", getAllListings);
 router.get("/featured", getFeaturedListings);
 router.get("/:id", getListingById);
-router.post("/", upload.array("images", 10), createListing);
+router.post("/", upload.array("images", 15), createListing);
 router.get("/filters", getFilteredListings);
 router.delete("/:id/image", deleteImage);
 router.delete("/:id", deleteListing);
 router.put("/:id/delete-image", deleteImage); 
-router.put("/:id", upload.array("images", 10), updateListing);
+router.put("/:id", upload.array("images", 15), updateListing);
 
 export default router;
