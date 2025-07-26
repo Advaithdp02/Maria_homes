@@ -39,18 +39,20 @@ const Listing = () => {
     };
 
     const fetchFilterData = async () => {
-      try {
-        const res = await axios.get(`${API_URL}/api/listings/filters`);
-        const data = res.data;
+  try {
+    const res = await axios.get(`${API_URL}/api/listings/filters/range`);
+    const data = res.data;
 
-        setPriceRange(data.price);
-        setSelectedPrice(data.price.max);
-        setPlotFilters({ area: data.area, price: data.price });
-        setSelectedArea(data.area.max);
-      } catch (err) {
-        console.error("Error fetching filter values:", err);
-      }
-    };
+    setPriceRange(data.price);
+    setPlotFilters({ area: data.area, price: data.price });
+
+    setSelectedPrice(""); // ✅ Let the user decide
+    setSelectedArea("");  // ✅ Let the user decide
+  } catch (err) {
+    console.error("Error fetching filter values:", err);
+  }
+};
+
 
     fetchListings();
     fetchFilterData();

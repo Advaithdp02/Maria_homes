@@ -10,6 +10,7 @@ import {
   updateListing,
   deleteListing,
   getFeaturedListings,
+  getFilterRanges,
 } from "../controllers/listingController.js";
 
 const router = express.Router();
@@ -24,5 +25,5 @@ router.delete("/:id/image", deleteImage);
 router.delete("/:id", deleteListing);
 router.put("/:id/delete-image", deleteImage); 
 router.put("/:id", upload.array("images", 15), updateListing);
-
+router.get("/filters/range", getFilterRanges);
 export default router;

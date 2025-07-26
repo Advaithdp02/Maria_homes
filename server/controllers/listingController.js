@@ -180,3 +180,24 @@ export const getFeaturedListings = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch featured listings" });
   }
 };
+export const getFilterRanges = async (req, res) => {
+  try {
+    const listings = await Listing.find();
+
+    const prices = listings.map(l => l.price).filter(p => p != null);
+    const areas = listings.map(l => l.area).filter(a => a != null);
+
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+    const minArea = Math.min(...areas);
+    const maxArea = Math.max(...areas);
+
+    res.json({
+      price: { min: minPrice, max: maxPrice },
+      area: { min: minArea, max: maxArea },
+    });
+  } catch (err) {
+    console.error("Error getting filter ranges:", err);
+    res.status(500).json({ error: "Failed to get filter values" });
+  }
+};
