@@ -1,5 +1,4 @@
-// src/pages/AddListing.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/ListingForm.css";
@@ -8,6 +7,7 @@ const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3030";
 
 const AddListing = () => {
   const navigate = useNavigate();
+  const fileInputRef = useRef(null); // to manually reset file input
 
   const [formData, setFormData] = useState({
     title: "",
@@ -25,8 +25,8 @@ const AddListing = () => {
     carParking: "",
   });
 
-  const [images, setImages] = useState([]);
-  const [previews, setPreviews] = useState([]);
+  const [images, setImages] = useState([]); // Array of File objects
+  const [previews, setPreviews] = useState([]); // Array of preview URLs
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -39,25 +39,28 @@ const AddListing = () => {
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    const previewUrls = files.map((file) => URL.createObjectURL(file));
+    const filePreviews = files.map((file) => URL.createObjectURL(file));
+
     setImages((prev) => [...prev, ...files]);
-    setPreviews((prev) => [...prev, ...previewUrls]);
+    setPreviews((prev) => [...prev, ...filePreviews]);
+
+    e.target.value = null; // reset file input so same file can be added again
   };
 
   const handleRemovePreview = (index) => {
-    const updatedImages = [...images];
-    const updatedPreviews = [...previews];
+    // Remove preview URL
+    URL.revokeObjectURL(previews[index]);
 
-    updatedImages.splice(index, 1);
-    URL.revokeObjectURL(updatedPreviews[index]);
-    updatedPreviews.splice(index, 1);
+    // Remove from both arrays
+    const updatedPreviews = previews.filter((_, i) => i !== index);
+    const updatedImages = images.filter((_, i) => i !== index);
 
-    setImages(updatedImages);
     setPreviews(updatedPreviews);
+    setImages(updatedImages);
   };
 
-  const isVideo = (url) => {
-    return url.match(/\.(mp4|webm|ogg)$/i);
+  const isVideo = (file) => {
+    return file.type.startsWith("video/");
   };
 
   useEffect(() => {
@@ -125,7 +128,6 @@ const AddListing = () => {
             setFormData((prev) => ({ ...prev, bedrooms: value }));
           }}
         />
-
         <input
           type="text"
           name="bathrooms"
@@ -136,7 +138,6 @@ const AddListing = () => {
             setFormData((prev) => ({ ...prev, bathrooms: value }));
           }}
         />
-
         <input
           type="text"
           name="floors"
@@ -147,7 +148,6 @@ const AddListing = () => {
             setFormData((prev) => ({ ...prev, floors: value }));
           }}
         />
-
         <input
           type="text"
           name="carParking"
@@ -164,13 +164,19 @@ const AddListing = () => {
           Featured
         </label>
 
-        <input type="file" multiple accept="image/*,video/*" onChange={handleImageChange} />
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          accept="image/*,video/*"
+          onChange={handleImageChange}
+        />
 
-        {/* Media Preview with Delete Option */}
+        {/* Previews with delete */}
         <div className="media-preview">
           {previews.map((url, index) => (
             <div key={index} className="preview-item" style={{ position: "relative", marginBottom: "10px" }}>
-              {isVideo(url) ? (
+              {isVideo(images[index]) ? (
                 <video src={url} controls width="200" />
               ) : (
                 <img src={url} alt={`preview-${index}`} width="200" />
