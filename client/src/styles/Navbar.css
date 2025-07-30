@@ -36,6 +36,7 @@
 }
 .contact-btn{
   width: 150px;
+
 }
 .nav-button-mobile,
 .contact-btn-mobile {
@@ -52,7 +53,7 @@
 }
 
 .nav-button:hover,
-.contact-btn:hover {
+.contact-btn-nav:hover {
   background-color: #0077ff;
 }
 
