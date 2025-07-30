@@ -4,7 +4,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { numberToCurrency } from "../pages/ListingDetail.jsx";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3030";
@@ -219,6 +219,7 @@ const Listing = () => {
           <AnimatePresence mode="wait">
             {filteredListings.map((item) => (
               <div className="listing-card-wrapper" key={item._id}>
+                <Link to={`/listing/${item._id}`} className="card-link">
                 <motion.div
                   className="listing-card"
                   initial={{ opacity: 0, scale: 0.95 }}
@@ -241,6 +242,7 @@ const Listing = () => {
                     </div>
                   </div>
                 </motion.div>
+                </Link>
               </div>
             ))}
           </AnimatePresence>

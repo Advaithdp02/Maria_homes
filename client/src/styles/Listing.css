@@ -182,7 +182,10 @@
   font-size: 14px;
   accent-color: #5E503F;
 }
-
+.card-link {
+  text-decoration: none;
+  color: inherit;
+}
 .filters-row span {
   font-weight: 500;
   font-size: 14px;
