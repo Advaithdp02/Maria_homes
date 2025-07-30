@@ -256,7 +256,9 @@ html {
   text-align: center;
   cursor: pointer;
 }
-
+.hiddenHeading{
+  color: #EAE0D5;
+}
 .featured-card img {
   width: 100%;
   height: 200px;

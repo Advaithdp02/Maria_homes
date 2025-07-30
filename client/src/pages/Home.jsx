@@ -67,6 +67,7 @@ const Home = () => {
     <div className="page-wrapper">
       <Navbar />
       <main className="content">
+        <h1 className="hiddenHeading">MARIA HOMES</h1>
 
         {/* Hero Section */}
         <section className="start-section" id="start">
