@@ -369,6 +369,17 @@ html {
     background-position: center;
     background-repeat: no-repeat;
   }
+  .featured-cards-container {
+    grid-template-columns: 1fr; /* Single column layout */
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+
+  .featured-card {
+    width: 100%;
+    max-width: 340px;
+    margin: 0 auto; /* Center the card */
+  }
 
   .hero-img {
     display: none;
