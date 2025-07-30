@@ -83,7 +83,7 @@ const Home = () => {
       animate={{ x: 0, opacity: 1 }}
       transition={{ delay: 0.3,duration: 0.9 ,ease: "easeOut" }}
     >
-      “Transforming Spaces.”<br />Building Dreams.”
+      “Transforming Spaces.<br />Building Dreams.”
     </motion.h1>
 
     <motion.div
