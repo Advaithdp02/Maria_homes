@@ -217,10 +217,30 @@ html {
 
 /* Cards container: side-by-side layout */
 .featured-cards-container {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  flex-wrap: wrap; /* Wraps on smaller screens */
+      display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    justify-content: center;
+    padding: 1rem;
+    align-items: center;
+    justify-items: center;
+}
+.featured-title{
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: #EAE0D5;
+  padding: 0 1rem;
+}
+.featured-card p{
+  font-size: 0.8rem;
+  margin-bottom: 1rem;
+  color: #EAE0D5;
+  font-family: "Times New Roman", Times, serif;
+  padding: 0 1rem;
+}
+.featured-card-link {
+  text-decoration: none;
+  color: inherit;
 }
 
 .featured-card {
@@ -234,6 +254,7 @@ html {
   color: #EAE0D5;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   text-align: center;
+  cursor: pointer;
 }
 
 .featured-card img {

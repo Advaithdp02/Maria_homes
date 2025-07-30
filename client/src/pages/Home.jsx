@@ -34,11 +34,16 @@ const Home = () => {
   const [fRef1, fInView1] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [fRef2, fInView2] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [fRef3, fInView3] = useInView({ triggerOnce: true, threshold: 0.2 });
+  const [fRef4, fInView4] = useInView({ triggerOnce: true, threshold: 0.2 });
+  const [fRef5, fInView5] = useInView({ triggerOnce: true, threshold: 0.2 });
+  const [fRef6, fInView6] = useInView({ triggerOnce: true, threshold: 0.2 });
+
 
   const [tRef1, tInView1] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [tRef2, tInView2] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [tRef3, tInView3] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [tRef4, tInView4] = useInView({ triggerOnce: true, threshold: 0.2 });
+  
 
   useEffect(() => {
     const scrollTarget = sessionStorage.getItem("scrollToSection");
@@ -55,7 +60,7 @@ const Home = () => {
     // Fetch only featured listings
     axios
       .get(`${API_URL}/api/listings/featured`)
-      .then((res) => setFeaturedListings(res.data.slice(0, 3)))
+      .then((res) => setFeaturedListings(res.data.slice(0, 6)))
       .catch((err) => console.error("Failed to fetch featured listings:", err));
   }, []);
   return (
@@ -153,30 +158,44 @@ const Home = () => {
         </section>
 
         {/* Featured */}
-        <section id="featured" className="featured-section">
+        {/* Featured */}
+<section id="featured" className="featured-section">
   <h2 className="section-title">Featured Listings</h2>
   <p className="section-description">
     A glimpse into our most trusted work — beautifully crafted homes, thoughtful renovations, and select real estate listings that reflect our standard of excellence.
   </p>
-  <div className="featured-cards-container">
-    {featuredListings.map((listing, index) => (
-      <motion.div
-        key={listing._id}
-        ref={[fRef1, fRef2, fRef3][index]}
-        className="featured-card"
-        initial={{ opacity: 0, y: 40 }}
-        animate={[fInView1, fInView2, fInView3][index] ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.5, delay: index * 0.2 }}
-      >
-        <img src={listing.images?.[0]} alt={listing.title} />
-        <h3 className="featured-title">{listing.title}</h3>
-        <p className="featured-location">{listing.location}</p> {/* 👈 Added location */}
-        <p>{listing.shortDescription}</p>
-        <Link to={`/listing/${listing._id}`} className="featured-btn">View More</Link>
-      </motion.div>
-    ))}
-  </div>
+
+  {/** Refs for 6 cards */}
+  {(() => {
+    const featuredRefs = [fRef1, fRef2, fRef3, fRef4, fRef5, fRef6];
+    const featuredInViews = [fInView1, fInView2, fInView3, fInView4, fInView5, fInView6];
+
+    return (
+      <div className="featured-cards-container">
+        {featuredListings.map((listing, index) => (
+          <Link to={`/listing/${listing._id}`} key={listing._id} className="featured-card-link">
+          <motion.div
+            key={listing._id}
+            ref={featuredRefs[index]}
+            className="featured-card"
+            initial={{ opacity: 0, y: 40 }}
+            animate={featuredInViews[index] ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: index * 0.2 }}
+            whileHover={{ scale: 1.03, transition: { duration: 0.3, ease: "easeInOut" } }}
+          >
+            <img src={listing.images?.[0]} alt={listing.title} />
+            <h3 className="featured-title">{listing.title}</h3>
+            <p className="featured-location">{listing.location}</p>
+            <p>{listing.shortDescription}</p>
+            <Link to={`/listing/${listing._id}`} className="featured-btn">View More</Link>
+          </motion.div>
+          </Link>
+        ))}
+      </div>
+    );
+  })()}
 </section>
+
 
 
         {/* Testimonials */}
