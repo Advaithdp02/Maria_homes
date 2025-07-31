@@ -37,6 +37,7 @@ const Navbar = () => {
       {/* Center: Nav links */}
       <div className={`nav-center ${isOpen ? "open" : ""}`}>
         <a href="#about" onClick={() => handleSectionClick("about")} className="nav-button">About</a>
+        <a href="/listings" className="nav-button listing-nav">Listings</a>
         <a href="#services" onClick={() => handleSectionClick("services")} className="nav-button">Services</a>
         <a href="#featured" onClick={() => handleSectionClick("featured")} className="nav-button">Featured</a>
         <a href="#reviews" onClick={() => handleSectionClick("reviews")} className="nav-button">Reviews</a>
@@ -51,8 +52,10 @@ const Navbar = () => {
       {/* Dropdown for mobile view */}
       <div className={`mobile-menu ${isOpen ? "open" : ""}`}>
         <a href="#about" className="nav-button-mobile">About</a>
+        <a href="/listings" className="nav-button-mobile ">Listing</a>
         <a href="#services" className="nav-button-mobile">Services</a>
         <a href="#featured" className="nav-button-mobile">Featured</a>
+        
         <a href="#reviews" className="nav-button-mobile">Reviews</a>
         <Link to="/contact" className="contact-btn-mobile">Contact</Link>
       </div>

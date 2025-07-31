@@ -368,6 +368,7 @@ html {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    margin-top: 65px;
   }
   .featured-cards-container {
     grid-template-columns: 1fr; /* Single column layout */
