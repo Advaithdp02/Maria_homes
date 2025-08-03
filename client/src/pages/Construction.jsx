@@ -7,9 +7,11 @@ import ImageCaraouselSecond from "../components/ImageCaraouselSecond";
 import { useNavigate } from "react-router-dom";
 
 const images = [
-  "/assets/img1.jpg",
-  "/assets/img2.jpg",
-  "/assets/img3.jpg",
+  "/assets/constructionimg1.JPG",
+  "/assets/constructionimg2.JPG",
+  "/assets/constructionimg3.JPG",
+  "/assets/constructionimg4.JPG",
+  "/assets/constructionimg5.JPG"
 ];
 const constructionSteps = [
   {

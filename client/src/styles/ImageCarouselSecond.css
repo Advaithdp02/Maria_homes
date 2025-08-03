@@ -18,7 +18,7 @@
 .carousel-img-second {
   width: 300px;
   height: 180px;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 10px;
   transition: all 0.5s ease;
   opacity: 0.5;
@@ -27,8 +27,8 @@
 
 .carousel-img-second.active {
   opacity: 1;
-  width: 450px;
-  height: 300px;
+  width: 50%;
+  height: auto;
   transform: scale(1.05);
 }
 

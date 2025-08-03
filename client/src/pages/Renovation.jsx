@@ -7,9 +7,10 @@ import Footer from "../components/Footer";
 import ImageCaraouselSecond from "../components/ImageCaraouselSecond";
 import { useNavigate } from "react-router-dom";
 const images = [
-  "/assets/img1.jpg",
-  "/assets/img2.jpg",
-  "/assets/img3.jpg",
+  "/assets/renovationimg1.JPG",
+  "/assets/renovationimg2.JPG",
+  "/assets/renovationimg3.JPG",
+  "/assets/renovationimg4.JPG"
 ];
 const renovationSteps = [
   {
