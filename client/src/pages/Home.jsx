@@ -116,7 +116,9 @@ const Home = () => {
             </div>
             <div className="about-text">
               <h2>About Us</h2>
-              <p>At Maria Homes, we specialize in transforming spaces from the ground up. With a passion for quality construction, timeless renovation, and smart real estate solutions, we’ve been helping families and businesses turn their dreams into reality for over a decade.</p>
+              <p>At Maria Homes, we specialize in transforming spaces from the ground up. With a passion for quality construction, timeless renovation, and smart real estate solutions, we’ve been helping families and businesses turn their dreams into reality for over a decade.
+                We are a company based in Kothamangalam, Ernakulam. We specialize in selling and renting houses, plots, and apartments in nearby areas like Muvattupuzha, Perumbavoor, Kolenchery, and more.”
+              </p>
               <ul>
                 <li>Expert Craftsmanship</li>
                 <li>Complete Solutions</li>
