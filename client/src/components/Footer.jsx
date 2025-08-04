@@ -34,7 +34,7 @@ const Footer = (props) => {
           <a href="https://instagram.com" target="_blank" rel="noreferrer">
             <img src="/assets/instagram.png" alt="Instagram" />
           </a>
-          <a href="mailto:mariahomes@gmail.com">
+          <a href="/contact">
             <img src="/assets/gmail.png" alt="Gmail" />
           </a>
           <a href="https://youtube.com" target="_blank" rel="noreferrer">
