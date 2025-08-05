@@ -13,9 +13,11 @@
 
 /* Logo */
 .logo-img {
-  height: 80px;
-  width: 100px;
-  object-fit: contain;
+      height: 100px;
+    width: 150px;
+    object-fit: cover;
+    padding-left: 20px;
+
 }
 
 /* Center nav buttons (desktop only) */

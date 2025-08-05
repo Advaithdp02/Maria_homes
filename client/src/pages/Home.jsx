@@ -129,8 +129,8 @@ const Home = () => {
           </div>
           <div className="about-tags">
             <div className="tag-box"><h3>10+ <br /> Years</h3></div>
-            <div className="tag-box"><h3>150+ <br /> Projects</h3></div>
-            <div className="tag-box"><h3>50+ <br /> Happy Families</h3></div>
+            <div className="tag-box"><h3>200+ <br /> Projects</h3></div>
+            <div className="tag-box"><h3>500+ <br /> Happy Families</h3></div>
           </div>
         </section>
 
