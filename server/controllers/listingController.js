@@ -2,7 +2,7 @@ import Listing from "../models/Listing.js";
 
 export const getAllListings = async (req, res) => {
   try {
-    const listings = await Listing.find();
+    const listings = await Listing.find().sort({ createdAt: -1 });
     res.json(listings);
   } catch (error) {
     res.status(500).json({ error: "Server error" });

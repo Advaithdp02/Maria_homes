@@ -177,9 +177,9 @@ const UpdateListing = () => {
 
         <input
           type="text"
-          name="floors"
-          placeholder="Floors"
-          value={form.floors ? `${form.floors} Floor${form.floors === "1" ? "" : "s"}` : ""}
+          name="bathrooms"
+          placeholder="Bathrooms"
+          value={form.bathrooms ? `${form.bathrooms} Bathroom${form.bathrooms === "1" ? "" : "s"}` : ""}
           onChange={(e) => {
             const value = e.target.value.replace(/\D/g, "");
             setForm((prev) => ({ ...prev, floors: value }));
