@@ -116,7 +116,9 @@ const Home = () => {
             </div>
             <div className="about-text">
               <h2>About Us</h2>
-              <p>At Maria Homes, we specialize in transforming spaces from the ground up. With a passion for quality construction, timeless renovation, and smart real estate solutions, we’ve been helping families and businesses turn their dreams into reality for over a decade.</p>
+              <p>At Maria Homes, we specialize in transforming spaces from the ground up. With a passion for quality construction, timeless renovation, and smart real estate solutions, we’ve been helping families and businesses turn their dreams into reality for over a decade.
+                We are a real estate and construction company based in Kothamangalam, Ernakulam. We specialize in selling and renting houses, plots, and apartments in nearby areas like Muvattupuzha, Perumbavoor, Kolenchery, and more.
+              </p>
               <ul>
                 <li>Expert Craftsmanship</li>
                 <li>Complete Solutions</li>
@@ -164,6 +166,7 @@ const Home = () => {
   <h2 className="section-title">Featured Listings</h2>
   <p className="section-description">
     A glimpse into our most trusted work — beautifully crafted homes, thoughtful renovations, and select real estate listings that reflect our standard of excellence.
+    Explore houses for sale in Kothamangalam, plots in Muvattupuzha, apartments in Perumbavoor – all verified and updated regularly.
   </p>
 
   {/** Refs for 6 cards */}
