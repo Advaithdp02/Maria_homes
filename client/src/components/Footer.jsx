@@ -28,16 +28,16 @@ const Footer = (props) => {
               isMobile || props.hidden === "hidden" ? "center" : "flex-end",
           }}
         >
-          <a href="https://facebook.com" target="_blank" rel="noreferrer">
+          <a href="https://www.facebook.com/share/1WZLeqjusw/" target="_blank" rel="noreferrer">
             <img src="/assets/facebook.png" alt="Facebook" />
           </a>
-          <a href="https://instagram.com" target="_blank" rel="noreferrer">
+          <a href="https://www.instagram.com/maria.homes.kothamangalam?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noreferrer">
             <img src="/assets/instagram.png" alt="Instagram" />
           </a>
-          <a href="mailto:mariahomes@gmail.com">
+          <a href="/contact">
             <img src="/assets/gmail.png" alt="Gmail" />
           </a>
-          <a href="https://youtube.com" target="_blank" rel="noreferrer">
+          <a href="https://youtube.com/@maria_homes?si=nokr48zFNC80JuHW" target="_blank" rel="noreferrer">
             <img src="/assets/youtube.png" alt="YouTube" />
           </a>
         </div>
