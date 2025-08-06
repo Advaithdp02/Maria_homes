@@ -74,23 +74,23 @@ const Listing = () => {
     fetchFilterData();
   }, []);
   useEffect(() => {
-  if (!listings.length) return; // skip if listings are not loaded yet
+    if (!listings.length) return; // skip if listings are not loaded yet
 
-  setLoading(true);
-  const timeout = setTimeout(() => {
-    setLoading(false);
-  }, 300); // simulate brief loading delay
+    setLoading(true);
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 300); // simulate brief loading delay
 
-  return () => clearTimeout(timeout); // cleanup on unmount or re-run
-}, [
-  activeType,
-  selectedBedrooms,
-  selectedBathrooms,
-  selectedFloors,
-  selectedPrice,
-  selectedArea,
-  carParking
-]);
+      return () => clearTimeout(timeout); // cleanup on unmount or re-run
+    }, [
+      activeType,
+      selectedBedrooms,
+      selectedBathrooms,
+      selectedFloors,
+      selectedPrice,
+      selectedArea,
+      carParking
+    ]);
 
   const filteredListings = listings.filter((item) => {
     if (item.type !== activeType) return false;
