@@ -8,8 +8,26 @@ import { Link, useNavigate } from "react-router-dom";
 import { numberToCurrency } from "../pages/ListingDetail.jsx";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3030";
+
+const SkeletonCard = () => (
+  <div className="listing-card-wrapper">
+    <div className="listing-card skeleton">
+      <div className="listing-img skeleton-img"></div>
+      <div className="listing-details">
+        <div className="skeleton-text"></div>
+        <div className="skeleton-text"></div>
+        <div className="card-bottom">
+          <div className="skeleton-text" style={{ width: "40%" }}></div>
+          <div className="skeleton-text" style={{ width: "30%" }}></div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 const Listing = () => {
   const [listings, setListings] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [activeType, setActiveType] = useState("house");
 
   // Filter states
@@ -31,84 +49,100 @@ const Listing = () => {
   useEffect(() => {
     const fetchListings = async () => {
       try {
+        setLoading(true);
         const res = await axios.get(`${API_URL}/api/listings`);
         setListings(res.data);
       } catch (err) {
         console.error("Error fetching listings:", err);
+      } finally {
+        setLoading(false);
       }
     };
-
+    
     const fetchFilterData = async () => {
-  try {
-    const res = await axios.get(`${API_URL}/api/listings/filters/range`);
-    const data = res.data;
-
-    setPriceRange(data.price);
-    setPlotFilters({ area: data.area, price: data.price });
-
-    setSelectedPrice(""); // ✅ Let the user decide
-    setSelectedArea("");  // ✅ Let the user decide
-  } catch (err) {
-    console.error("Error fetching filter values:", err);
-  }
-};
-
+      try {
+        const res = await axios.get(`${API_URL}/api/listings/filters/range`);
+        const data = res.data;
+        setPriceRange(data.price);
+        setPlotFilters({ area: data.area, price: data.price });
+      } catch (err) {
+        console.error("Error fetching filter values:", err);
+      }
+    };
 
     fetchListings();
     fetchFilterData();
   }, []);
+  useEffect(() => {
+  if (!listings.length) return; // skip if listings are not loaded yet
+
+  setLoading(true);
+  const timeout = setTimeout(() => {
+    setLoading(false);
+  }, 300); // simulate brief loading delay
+
+  return () => clearTimeout(timeout); // cleanup on unmount or re-run
+}, [
+  activeType,
+  selectedBedrooms,
+  selectedBathrooms,
+  selectedFloors,
+  selectedPrice,
+  selectedArea,
+  carParking
+]);
 
   const filteredListings = listings.filter((item) => {
-  if (item.type !== activeType) return false;
+    if (item.type !== activeType) return false;
 
-  if (activeType === "house") {
-    if (
-      selectedBedrooms &&
-      !(
-        (selectedBedrooms === "5+" && Number(item.bedrooms) >= 5) ||
-        Number(item.bedrooms) === Number(selectedBedrooms)
+    if (activeType === "house") {
+      if (
+        selectedBedrooms &&
+        !(
+          (selectedBedrooms === "5+" && Number(item.bedrooms) >= 5) ||
+          Number(item.bedrooms) === Number(selectedBedrooms)
+        )
       )
-    )
-      return false;
+        return false;
 
-    if (
-      selectedBathrooms &&
-      !(
-        (selectedBathrooms === "5+" && Number(item.bathrooms) >= 5) ||
-        Number(item.bathrooms) === Number(selectedBathrooms)
+      if (
+        selectedBathrooms &&
+        !(
+          (selectedBathrooms === "5+" && Number(item.bathrooms) >= 5) ||
+          Number(item.bathrooms) === Number(selectedBathrooms)
+        )
       )
-    )
-      return false;
+        return false;
 
-    if (
-      selectedFloors &&
-      !(
-        (selectedFloors === "5+" && Number(item.floors) >= 5) ||
-        Number(item.floors) === Number(selectedFloors)
+      if (
+        selectedFloors &&
+        !(
+          (selectedFloors === "5+" && Number(item.floors) >= 5) ||
+          Number(item.floors) === Number(selectedFloors)
+        )
       )
-    )
-      return false;
+        return false;
 
-    if (
-      carParking &&
-      !(
-        (carParking === "5+" && Number(item.carParking) >= 5) ||
-        Number(item.carParking) === Number(carParking)
+      if (
+        carParking &&
+        !(
+          (carParking === "5+" && Number(item.carParking) >= 5) ||
+          Number(item.carParking) === Number(carParking)
+        )
       )
-    )
-      return false;
+        return false;
 
-    if (selectedPrice && Number(item.price) > Number(selectedPrice)) return false;
-    if (selectedArea && Number(item.area) < Number(selectedArea)) return false;
-  }
+      if (selectedPrice && Number(item.price) > Number(selectedPrice)) return false;
+      if (selectedArea && Number(item.area) < Number(selectedArea)) return false;
+    }
 
-  if (activeType === "plot") {
-    if (selectedArea && Number(item.area) < Number(selectedArea)) return false;
-    if (selectedPrice && Number(item.price) > Number(selectedPrice)) return false;
-  }
+    if (activeType === "plot") {
+      if (selectedArea && Number(item.area) < Number(selectedArea)) return false;
+      if (selectedPrice && Number(item.price) > Number(selectedPrice)) return false;
+    }
 
-  return true;
-});
+    return true;
+  });
 
   return (
     <div className="page-wrapper">
@@ -120,131 +154,128 @@ const Listing = () => {
         <div className="toggle-buttons">
           <button
             className={`toggle-btn ${activeType === "house" ? "active" : ""}`}
-            onClick={() => {
-              setActiveType("house");
-            }}
+            onClick={() => setActiveType("house")}
           >
             House
           </button>
           <button
             className={`toggle-btn ${activeType === "plot" ? "active" : ""}`}
-            onClick={() => {
-              setActiveType("plot");
-            }}
+            onClick={() => setActiveType("plot")}
           >
             Plot
           </button>
         </div>
 
         {/* Filter Section */}
-        {activeType === "house" ? (
-  <div className="filters-row">
-    <select value={selectedBedrooms} onChange={(e) => setSelectedBedrooms(e.target.value)}>
-      <option value="">Bedrooms</option>
-      {[1, 2, 3, 4].map((b) => (
-        <option key={b} value={b}>{b} BHK</option>
-      ))}
-      <option value="5+">5+ BHK</option>
-    </select>
+        <div className="filters-row">
+          {activeType === "house" ? (
+            <>
+              <select value={selectedBedrooms} onChange={(e) => setSelectedBedrooms(e.target.value)}>
+                <option value="">Bedrooms</option>
+                {[1, 2, 3, 4].map((b) => (
+                  <option key={b} value={b}>{b} BHK</option>
+                ))}
+                <option value="5+">5+ BHK</option>
+              </select>
 
-    <select value={selectedBathrooms} onChange={(e) => setSelectedBathrooms(e.target.value)}>
-      <option value="">Bathrooms</option>
-      {[1, 2, 3, 4].map((b) => (
-        <option key={b} value={b}>{b} Baths</option>
-      ))}
-      <option value="5+">5+ Baths</option>
-    </select>
+              <select value={selectedBathrooms} onChange={(e) => setSelectedBathrooms(e.target.value)}>
+                <option value="">Bathrooms</option>
+                {[1, 2, 3, 4].map((b) => (
+                  <option key={b} value={b}>{b} Baths</option>
+                ))}
+                <option value="5+">5+ Baths</option>
+              </select>
 
-    <select value={selectedFloors} onChange={(e) => setSelectedFloors(e.target.value)}>
-      <option value="">Floors</option>
-      {[1, 2, 3, 4].map((f) => (
-        <option key={f} value={f}>
-          {f} {f === 1 ? "floor" : "floors"}
-        </option>
-      ))}
-      <option value="5+">5+ floors</option>
-    </select>
+              <select value={selectedFloors} onChange={(e) => setSelectedFloors(e.target.value)}>
+                <option value="">Floors</option>
+                {[1, 2, 3, 4].map((f) => (
+                  <option key={f} value={f}>{f} {f === 1 ? "floor" : "floors"}</option>
+                ))}
+                <option value="5+">5+ floors</option>
+              </select>
 
-    <select value={carParking} onChange={(e) => setCarParking(e.target.value)}>
-      <option value="">Car Parking</option>
-      {[1, 2, 3, 4].map((p) => (
-        <option key={p} value={p}>{p} Car Parking</option>
-      ))}
-      <option value="5+">5+ Car Parking</option>
-    </select>
+              <select value={carParking} onChange={(e) => setCarParking(e.target.value)}>
+                <option value="">Car Parking</option>
+                {[1, 2, 3, 4].map((p) => (
+                  <option key={p} value={p}>{p} Car Parking</option>
+                ))}
+                <option value="5+">5+ Car Parking</option>
+              </select>
 
-    <input
-      type="range"
-      min={priceRange.min}
-      max={priceRange.max}
-      value={selectedPrice}
-      onChange={(e) => setSelectedPrice(e.target.value)}
-    />
-    <span>Up to {numberToCurrency(selectedPrice)}</span>
+              <input
+                type="range"
+                min={priceRange.min}
+                max={priceRange.max}
+                value={selectedPrice}
+                onChange={(e) => setSelectedPrice(e.target.value)}
+              />
+              <span>Up to {numberToCurrency(selectedPrice)}</span>
 
-    <input
-      type="range"
-      min={plotFilters.area.min}
-      max={plotFilters.area.max}
-      value={selectedArea}
-      onChange={(e) => setSelectedArea(e.target.value)}
-    />
-    <span>Min Area: {selectedArea} sq.ft</span>
-  </div>
-) : (
-  <div className="filters-row">
-    <input
-      type="range"
-      min={plotFilters.area.min}
-      max={plotFilters.area.max}
-      value={selectedArea}
-      onChange={(e) => setSelectedArea(e.target.value)}
-    />
-    <span>Min Area: {selectedArea} cent</span>
+              <input
+                type="range"
+                min={plotFilters.area.min}
+                max={plotFilters.area.max}
+                value={selectedArea}
+                onChange={(e) => setSelectedArea(e.target.value)}
+              />
+              <span>Min Area: {selectedArea} sq.ft</span>
+            </>
+          ) : (
+            <>
+              <input
+                type="range"
+                min={plotFilters.area.min}
+                max={plotFilters.area.max}
+                value={selectedArea}
+                onChange={(e) => setSelectedArea(e.target.value)}
+              />
+              <span>Min Area: {selectedArea} cent</span>
 
-    <input
-      type="range"
-      min={plotFilters.price.min}
-      max={plotFilters.price.max}
-      value={selectedPrice}
-      onChange={(e) => setSelectedPrice(e.target.value)}
-    />
-    <span>Max Price: {numberToCurrency(selectedPrice)}</span>
-  </div>
-)}
-
+              <input
+                type="range"
+                min={plotFilters.price.min}
+                max={plotFilters.price.max}
+                value={selectedPrice}
+                onChange={(e) => setSelectedPrice(e.target.value)}
+              />
+              <span>Max Price: {numberToCurrency(selectedPrice)}</span>
+            </>
+          )}
+        </div>
 
         {/* Listings */}
         <div className="listings-grid">
           <AnimatePresence mode="wait">
-            {filteredListings.map((item) => (
-              <div className="listing-card-wrapper" key={item._id}>
-                <Link to={`/listing/${item._id}`} className="card-link">
-                <motion.div
-                  className="listing-card"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
-                >
-                  <img src={item.images[0]} alt={item.title} className="listing-img" />
-                  <div className="listing-details">
-                    <h3>{item.title}</h3>
-                    <p className="desc">{item.shortDescription}</p>
-                    <div className="card-bottom">
-                      <span className="location">{item.location}</span>
-                      <button
-                        className="view-btn"
-                        onClick={() => navigate(`/listing/${item._id}`)}
+            {loading
+              ? Array.from({ length: 6 }).map((_, index) => <SkeletonCard key={index} />)
+              : filteredListings.map((item) => (
+                  <div className="listing-card-wrapper" key={item._id}>
+                    <Link to={`/listing/${item._id}`} className="card-link">
+                      <motion.div
+                        className="listing-card"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.4, ease: "easeOut" }}
                       >
-                        View More
-                      </button>
-                    </div>
+                        <img src={item.images[0]} alt={item.title} className="listing-img" />
+                        <div className="listing-details">
+                          <h3>{item.title}</h3>
+                          <p className="desc">{item.shortDescription}</p>
+                          <div className="card-bottom">
+                            <span className="location">{item.location}</span>
+                            <button
+                              className="view-btn"
+                              onClick={() => navigate(`/listing/${item._id}`)}
+                            >
+                              View More
+                            </button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    </Link>
                   </div>
-                </motion.div>
-                </Link>
-              </div>
-            ))}
+                ))}
           </AnimatePresence>
         </div>
       </main>
