@@ -69,7 +69,16 @@ const ImageCarousel = ({ media }) => {
     };
   }, [nextSlide, prevSlide]);
 
-  const slideWidth = 900; // fixed slide width as per your example
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+useEffect(() => {
+  const handleResize = () => setWindowWidth(window.innerWidth);
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
+
+const slideWidth = isMobile ? windowWidth : 900;
+// fixed slide width as per your example
   const translateX = -currentIndex * slideWidth;
 
   return (
