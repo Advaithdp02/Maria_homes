@@ -1,27 +1,44 @@
+/* Container wrapper */
 .carousel-wrapper {
   position: relative;
   width: 100%;
   max-width: 900px;
   margin: 0 auto;
   overflow: hidden;
+  outline: none; /* because you used tabIndex */
 }
 
+/* Track that slides */
 .carousel-track {
+  display: flex;
   width: 100%;
   height: auto;
+  transition: transform 0.5s ease;
 }
 
-.carousel-img,
-.carousel-track video {
+/* Each slide */
+.carousel-slide {
+  flex-shrink: 0;
+  width: 833px; /* fixed width as per your JS */
+  outline: none;
+}
+
+/* Images and videos inside each slide */
+.carousel-media,
+.carousel-media video {
   width: 100%;
   height: auto;
   max-height: 80vh;
   object-fit: cover;
   border-radius: 10px;
+  border: 5px solid #333; /* Dark border around main image/video */
+  box-sizing: border-box;
+  max-height: 600px;
+  object-fit: contain;
 }
 
-/* Arrows */
-.nav-button-imagee {
+/* Navigation arrows */
+.carousel-nav-button {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -35,16 +52,21 @@
   z-index: 2;
 }
 
-.nav-prev {
+.carousel-nav-prev {
   left: 10px;
 }
 
-.nav-next {
+.carousel-nav-next {
   right: 10px;
 }
 
-/* Play/Pause button */
-.play-pause-button {
+.carousel-nav-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Play/Pause button for video */
+.carousel-play-pause-button {
   position: absolute;
   bottom: 20px;
   left: 50%;
@@ -59,6 +81,33 @@
   font-size: 1rem;
 }
 
+/* Thumbnail container */
+.carousel-thumbnails {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Each thumbnail button */
+.carousel-thumbnail {
+  width: 99px;
+  height: 80px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 4px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.carousel-thumbnail.active {
+  border-color: #333;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+}
+
+/* Responsive for mobile */
 @media (max-width: 768px) {
   .carousel-wrapper {
     max-width: 100%;
@@ -66,55 +115,28 @@
     border-radius: 0;
   }
 
-  .carousel-img,
-  .carousel-track video {
-    width: 100%;
+  .carousel-media,
+  .carousel-media video {
     height: 60vh;
     max-height: none;
     object-fit: cover;
     border-radius: 0;
   }
 
-  .nav-button-imagee {
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
+  .carousel-nav-button {
     font-size: 2rem;
     padding: 0.5rem 0.8rem;
   }
 
-  .nav-prev {
+  .carousel-nav-prev {
     left: 10px;
   }
 
-  .nav-next {
+  .carousel-nav-next {
     right: 10px;
   }
 
-  .play-pause-button {
-    display: none; /* hides the play button on mobile since native controls are used */
+  .carousel-play-pause-button {
+    display: none; /* use native controls on mobile */
   }
-}
-.nav-button-imagee:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-.carousel-img {
-  border: 5px solid #333; /* Dark border around main image/video */
-  border-radius: 6px; /* Slightly rounded corners for nicer look */
-  box-sizing: border-box;
-  max-height: 600px; /* Optional: constrain height */
-  object-fit: contain; /* Make sure image fits nicely */
-}
-
-._2ToZN.lf0Cx {
-  border-radius: 4px;
-  box-shadow: 0 0 4px rgba(0,0,0,0.3); /* subtle shadow to stand out */
-  border: 2px solid transparent; /* default border transparent */
-  transition: border-color 0.3s ease;
-}
-
-._2ToZN.lf0Cx._3V0eE {
-  border-color: #333; /* visible border for active thumbnail */
-  box-shadow: 0 0 8px rgba(0,0,0,0.6);
 }

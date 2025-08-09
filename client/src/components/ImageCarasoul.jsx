@@ -69,14 +69,14 @@ const ImageCarousel = ({ media }) => {
     };
   }, [nextSlide, prevSlide]);
 
-  const slideWidth = 833; // fixed slide width as per your example
+  const slideWidth = 900; // fixed slide width as per your example
   const translateX = -currentIndex * slideWidth;
 
   return (
     <div className="carousel-wrapper" tabIndex={0} role="button">
       <button
         onClick={prevSlide}
-        className="nav-button-imagee nav-prev"
+        className="carousel-nav-button carousel-nav-prev"
         disabled={currentIndex === 0}
         aria-label="Previous Slide"
       >
@@ -87,8 +87,6 @@ const ImageCarousel = ({ media }) => {
         className="carousel-track"
         ref={trackRef}
         style={{
-          display: "flex",
-          transition: "transform 0.5s ease",
           transform: `translate3d(${translateX}px, 0, 0)`,
           width: `${media.length * slideWidth}px`,
         }}
@@ -96,26 +94,22 @@ const ImageCarousel = ({ media }) => {
         {media.map((src, i) => (
           <div
             key={i}
-            style={{ width: `${slideWidth}px`, flexShrink: 0, outline: "none" }}
+            className="carousel-slide"
             tabIndex={-1}
             aria-hidden={currentIndex !== i}
-            className="_23Jeb"
+            style={{ width: `${slideWidth}px` }}
           >
             {isVideo(src) ? (
               <video
                 ref={(el) => (videoRefs.current[i] = el)}
                 src={src}
-                className="carousel-img"
+                className="carousel-media"
                 muted
                 loop
                 controls={isMobile}
               />
             ) : (
-              <img
-                src={src}
-                alt={`Slide-${i}`}
-                className="carousel-img"
-              />
+              <img src={src} alt={`Slide-${i}`} className="carousel-media" />
             )}
           </div>
         ))}
@@ -123,7 +117,7 @@ const ImageCarousel = ({ media }) => {
 
       <button
         onClick={nextSlide}
-        className="nav-button-imagee nav-next"
+        className="carousel-nav-button carousel-nav-next"
         disabled={currentIndex === media.length - 1}
         aria-label="Next Slide"
       >
@@ -133,7 +127,7 @@ const ImageCarousel = ({ media }) => {
       {!isMobile && isVideo(media[currentIndex]) && (
         <button
           onClick={togglePlayPause}
-          className="play-pause-button"
+          className="carousel-play-pause-button"
           aria-label="Play/Pause Video"
         >
           ▶ / ❚❚
@@ -141,25 +135,12 @@ const ImageCarousel = ({ media }) => {
       )}
 
       {/* Thumbnails */}
-      <div
-        className="_24Sf1"
-        data-aut-id="gallery-thumbnail"
-        style={{ marginTop: "10px", display: "flex", justifyContent: "center" }}
-      >
+      <div className="carousel-thumbnails" data-aut-id="gallery-thumbnail">
         {media.map((src, i) => (
           <button
             key={i}
-            className={`_2ToZN lf0Cx ${currentIndex === i ? "_3V0eE" : ""}`}
-            style={{
-              width: "99px",
-              height: "80px",
-              margin: "0 4px",
-              backgroundImage: `url(${src})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              border: currentIndex === i ? "2px solid #333" : "none",
-              cursor: "pointer",
-            }}
+            className={`carousel-thumbnail ${currentIndex === i ? "active" : ""}`}
+            style={{ backgroundImage: `url(${src})` }}
             onClick={() => {
               pauseCurrentVideo();
               setCurrentIndex(i);
