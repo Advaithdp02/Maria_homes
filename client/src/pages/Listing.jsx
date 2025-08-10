@@ -93,7 +93,7 @@ const Listing = () => {
         const res = await axios.get(
           `${API_URL}/api/listings/filtered/value?${params.toString()}`
         );
-
+        console.log(res.data.items)
         setListings(res.data.items);
         setTotalPages(res.data.totalPages);
         setPage(res.data.currentPage);

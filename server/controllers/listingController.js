@@ -129,6 +129,7 @@ export const getFilteredListings = async (req, res) => {
 
     const totalItems = await Listing.countDocuments(query);
     const listings = await Listing.find(query)
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
