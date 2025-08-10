@@ -28,7 +28,13 @@ const SkeletonCard = () => (
 const Listing = () => {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showNoListings, setShowNoListings] = useState(false); // For delayed no listings message
   const [activeType, setActiveType] = useState("house");
+
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 6; // Items per page
 
   // Filter states
   const [selectedBedrooms, setSelectedBedrooms] = useState("");
@@ -46,19 +52,8 @@ const Listing = () => {
 
   const navigate = useNavigate();
 
+  // Fetch filter ranges on mount
   useEffect(() => {
-    const fetchListings = async () => {
-      try {
-        setLoading(true);
-        const res = await axios.get(`${API_URL}/api/listings`);
-        setListings(res.data);
-      } catch (err) {
-        console.error("Error fetching listings:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
     const fetchFilterData = async () => {
       try {
         const res = await axios.get(`${API_URL}/api/listings/filters/range`);
@@ -69,80 +64,80 @@ const Listing = () => {
         console.error("Error fetching filter values:", err);
       }
     };
-
-    fetchListings();
     fetchFilterData();
   }, []);
+
+  // Fetch listings on page, activeType or filters change
   useEffect(() => {
-    if (!listings.length) return; // skip if listings are not loaded yet
+    let noListingsTimeout;
 
-    setLoading(true);
-    const timeout = setTimeout(() => {
-      setLoading(false);
-    }, 300); // simulate brief loading delay
+    const fetchListings = async () => {
+      try {
+        setLoading(true);
+        setShowNoListings(false);
 
-      return () => clearTimeout(timeout); // cleanup on unmount or re-run
-    }, [
-      activeType,
-      selectedBedrooms,
-      selectedBathrooms,
-      selectedFloors,
-      selectedPrice,
-      selectedArea,
-      carParking
-    ]);
+        // Build query params string with filters & pagination
+        const params = new URLSearchParams({
+          type: activeType,
+          page,
+          limit,
+        });
 
-  const filteredListings = listings.filter((item) => {
-    if (item.type !== activeType) return false;
+        if (selectedBedrooms) params.append("bedrooms", selectedBedrooms);
+        if (selectedBathrooms) params.append("bathrooms", selectedBathrooms);
+        if (selectedFloors) params.append("floors", selectedFloors);
+        if (carParking) params.append("carParking", carParking);
+        if (selectedPrice) params.append("maxPrice", selectedPrice);
+        if (selectedArea) params.append("maxArea", selectedArea);
 
-    if (activeType === "house") {
-      if (
-        selectedBedrooms &&
-        !(
-          (selectedBedrooms === "5+" && Number(item.bedrooms) >= 5) ||
-          Number(item.bedrooms) === Number(selectedBedrooms)
-        )
-      )
-        return false;
+        const res = await axios.get(
+          `${API_URL}/api/listings/filtered/value?${params.toString()}`
+        );
 
-      if (
-        selectedBathrooms &&
-        !(
-          (selectedBathrooms === "5+" && Number(item.bathrooms) >= 5) ||
-          Number(item.bathrooms) === Number(selectedBathrooms)
-        )
-      )
-        return false;
+        setListings(res.data.items);
+        setTotalPages(res.data.totalPages);
+        setPage(res.data.currentPage);
 
-      if (
-        selectedFloors &&
-        !(
-          (selectedFloors === "5+" && Number(item.floors) >= 5) ||
-          Number(item.floors) === Number(selectedFloors)
-        )
-      )
-        return false;
+        setLoading(false);
 
-      if (
-        carParking &&
-        !(
-          (carParking === "5+" && Number(item.carParking) >= 5) ||
-          Number(item.carParking) === Number(carParking)
-        )
-      )
-        return false;
+        // If no listings, wait 1 second before showing message for smoother UI
+        if (res.data.items.length === 0) {
+          noListingsTimeout = setTimeout(() => {
+            setShowNoListings(true);
+          }, 1000);
+        } else {
+          setShowNoListings(false);
+        }
+      } catch (err) {
+        console.error("Error fetching listings:", err);
+        setLoading(false);
+        setShowNoListings(true);
+      }
+    };
 
-      if (selectedPrice && Number(item.price) > Number(selectedPrice)) return false;
-      if (selectedArea && Number(item.area) < Number(selectedArea)) return false;
+    fetchListings();
+
+    // Cleanup timeout on unmount or when dependencies change
+    return () => {
+      if (noListingsTimeout) clearTimeout(noListingsTimeout);
+    };
+  }, [
+    activeType,
+    selectedBedrooms,
+    selectedBathrooms,
+    selectedFloors,
+    selectedPrice,
+    selectedArea,
+    carParking,
+    page,
+  ]);
+
+  // Change page handler
+  const goToPage = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages && newPage !== page) {
+      setPage(newPage);
     }
-
-    if (activeType === "plot") {
-      if (selectedArea && Number(item.area) < Number(selectedArea)) return false;
-      if (selectedPrice && Number(item.price) > Number(selectedPrice)) return false;
-    }
-
-    return true;
-  });
+  };
 
   return (
     <div className="page-wrapper">
@@ -154,13 +149,19 @@ const Listing = () => {
         <div className="toggle-buttons">
           <button
             className={`toggle-btn ${activeType === "house" ? "active" : ""}`}
-            onClick={() => setActiveType("house")}
+            onClick={() => {
+              setActiveType("house");
+              setPage(1);
+            }}
           >
             House
           </button>
           <button
             className={`toggle-btn ${activeType === "plot" ? "active" : ""}`}
-            onClick={() => setActiveType("plot")}
+            onClick={() => {
+              setActiveType("plot");
+              setPage(1);
+            }}
           >
             Plot
           </button>
@@ -170,34 +171,66 @@ const Listing = () => {
         <div className="filters-row">
           {activeType === "house" ? (
             <>
-              <select value={selectedBedrooms} onChange={(e) => setSelectedBedrooms(e.target.value)}>
+              <select
+                value={selectedBedrooms}
+                onChange={(e) => {
+                  setSelectedBedrooms(e.target.value);
+                  setPage(1);
+                }}
+              >
                 <option value="">Bedrooms</option>
                 {[1, 2, 3, 4].map((b) => (
-                  <option key={b} value={b}>{b} BHK</option>
+                  <option key={b} value={b}>
+                    {b} BHK
+                  </option>
                 ))}
                 <option value="5+">5+ BHK</option>
               </select>
 
-              <select value={selectedBathrooms} onChange={(e) => setSelectedBathrooms(e.target.value)}>
+              <select
+                value={selectedBathrooms}
+                onChange={(e) => {
+                  setSelectedBathrooms(e.target.value);
+                  setPage(1);
+                }}
+              >
                 <option value="">Bathrooms</option>
                 {[1, 2, 3, 4].map((b) => (
-                  <option key={b} value={b}>{b} Baths</option>
+                  <option key={b} value={b}>
+                    {b} Baths
+                  </option>
                 ))}
                 <option value="5+">5+ Baths</option>
               </select>
 
-              <select value={selectedFloors} onChange={(e) => setSelectedFloors(e.target.value)}>
+              <select
+                value={selectedFloors}
+                onChange={(e) => {
+                  setSelectedFloors(e.target.value);
+                  setPage(1);
+                }}
+              >
                 <option value="">Floors</option>
                 {[1, 2, 3, 4].map((f) => (
-                  <option key={f} value={f}>{f} {f === 1 ? "floor" : "floors"}</option>
+                  <option key={f} value={f}>
+                    {f} {f === 1 ? "floor" : "floors"}
+                  </option>
                 ))}
                 <option value="5+">5+ floors</option>
               </select>
 
-              <select value={carParking} onChange={(e) => setCarParking(e.target.value)}>
+              <select
+                value={carParking}
+                onChange={(e) => {
+                  setCarParking(e.target.value);
+                  setPage(1);
+                }}
+              >
                 <option value="">Car Parking</option>
                 {[1, 2, 3, 4].map((p) => (
-                  <option key={p} value={p}>{p} Car Parking</option>
+                  <option key={p} value={p}>
+                    {p} Car Parking
+                  </option>
                 ))}
                 <option value="5+">5+ Car Parking</option>
               </select>
@@ -207,7 +240,10 @@ const Listing = () => {
                 min={priceRange.min}
                 max={priceRange.max}
                 value={selectedPrice}
-                onChange={(e) => setSelectedPrice(e.target.value)}
+                onChange={(e) => {
+                  setSelectedPrice(e.target.value);
+                  setPage(1);
+                }}
               />
               <span>Up to {numberToCurrency(selectedPrice)}</span>
 
@@ -216,7 +252,10 @@ const Listing = () => {
                 min={plotFilters.area.min}
                 max={plotFilters.area.max}
                 value={selectedArea}
-                onChange={(e) => setSelectedArea(e.target.value)}
+                onChange={(e) => {
+                  setSelectedArea(e.target.value);
+                  setPage(1);
+                }}
               />
               <span>Min Area: {selectedArea} sq.ft</span>
             </>
@@ -227,7 +266,10 @@ const Listing = () => {
                 min={plotFilters.area.min}
                 max={plotFilters.area.max}
                 value={selectedArea}
-                onChange={(e) => setSelectedArea(e.target.value)}
+                onChange={(e) => {
+                  setSelectedArea(e.target.value);
+                  setPage(1);
+                }}
               />
               <span>Min Area: {selectedArea} cent</span>
 
@@ -236,47 +278,95 @@ const Listing = () => {
                 min={plotFilters.price.min}
                 max={plotFilters.price.max}
                 value={selectedPrice}
-                onChange={(e) => setSelectedPrice(e.target.value)}
+                onChange={(e) => {
+                  setSelectedPrice(e.target.value);
+                  setPage(1);
+                }}
               />
               <span>Max Price: {numberToCurrency(selectedPrice)}</span>
             </>
           )}
         </div>
 
-        {/* Listings */}
-        <div className="listings-grid">
-          <AnimatePresence mode="wait">
-            {loading
-              ? Array.from({ length: 6 }).map((_, index) => <SkeletonCard key={index} />)
-              : filteredListings.map((item) => (
-                  <div className="listing-card-wrapper" key={item._id}>
-                    <Link to={`/listing/${item._id}`} className="card-link">
-                      <motion.div
-                        className="listing-card"
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.4, ease: "easeOut" }}
-                      >
-                        <img src={item.images[0]} alt={item.title} className="listing-img" />
-                        <div className="listing-details">
-                          <h3>{item.title}</h3>
-                          <p className="desc">{item.shortDescription}</p>
-                          <div className="card-bottom">
-                            <span className="location">{item.location}</span>
-                            <button
-                              className="view-btn"
-                              onClick={() => navigate(`/listing/${item._id}`)}
-                            >
-                              View More
-                            </button>
-                          </div>
+        {/* Listings Grid or Messages */}
+        {loading ? (
+          <div className="listings-grid">
+            {Array.from({ length: limit }).map((_, index) => (
+              <SkeletonCard key={index} />
+            ))}
+          </div>
+        ) : listings.length > 0 ? (
+          <div className="listings-grid">
+            <AnimatePresence mode="wait">
+              {listings.map((item) => (
+                <div className="listing-card-wrapper" key={item._id}>
+                  <Link to={`/listing/${item._id}`} className="card-link">
+                    <motion.div
+                      className="listing-card"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ duration: 0.4, ease: "easeOut" }}
+                    >
+                      <img
+                        src={item.images[0]}
+                        alt={item.title}
+                        className="listing-img"
+                      />
+                      <div className="listing-details">
+                        <h3>{item.title}</h3>
+                        <p className="desc">{item.shortDescription}</p>
+                        <div className="card-bottom">
+                          <span className="location">{item.location}</span>
+                          <button
+                            className="view-btn"
+                            onClick={() => navigate(`/listing/${item._id}`)}
+                          >
+                            View More
+                          </button>
                         </div>
-                      </motion.div>
-                    </Link>
-                  </div>
-                ))}
-          </AnimatePresence>
+                      </div>
+                    </motion.div>
+                  </Link>
+                </div>
+              ))}
+            </AnimatePresence>
+          </div>
+        ) : (
+          showNoListings && (
+            <p style={{ textAlign: "center", marginTop: "2rem" }}>
+              No listings found.
+            </p>
+          )
+        )}
+
+        {/* Pagination Controls */}
+        <div className="pagination-controls">
+          <button
+            onClick={() => goToPage(page - 1)}
+            disabled={page <= 1}
+            className="pagination-btn"
+          >
+            Prev
+          </button>
+
+          {[...Array(totalPages)].map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => goToPage(idx + 1)}
+              className={`pagination-btn ${page === idx + 1 ? "active" : ""}`}
+            >
+              {idx + 1}
+            </button>
+          ))}
+
+          <button
+            onClick={() => goToPage(page + 1)}
+            disabled={page >= totalPages}
+            className="pagination-btn"
+          >
+            Next
+          </button>
         </div>
       </main>
       <Footer />

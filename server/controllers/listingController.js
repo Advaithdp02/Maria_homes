@@ -2,12 +2,29 @@ import Listing from "../models/Listing.js";
 
 export const getAllListings = async (req, res) => {
   try {
-    const listings = await Listing.find().sort({ createdAt: -1 });
-    res.json(listings);
+    let { page, limit } = req.query;
+    page = parseInt(page) || 1;   // Default page 1
+    limit = parseInt(limit) || 10; // Default 10 items per page
+
+    const skip = (page - 1) * limit;
+
+    const totalItems = await Listing.countDocuments();
+    const listings = await Listing.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    res.json({
+      totalItems,
+      currentPage: page,
+      totalPages: Math.ceil(totalItems / limit),
+      items: listings
+    });
   } catch (error) {
     res.status(500).json({ error: "Server error" });
   }
 };
+
 
 export const getListingById = async (req, res) => {
   try {
@@ -52,26 +69,85 @@ export const createListing = async (req, res) => {
 };
 
 export const getFilteredListings = async (req, res) => {
+   
   try {
-    const { type, bedrooms, bathrooms,carParking, floors, maxPrice, maxArea } = req.query;
+    let {
+      type,
+      bedrooms,
+      bathrooms,
+      carParking,
+      floors,
+      maxPrice,
+      maxArea,
+      page,
+      limit
+    } = req.query;
+
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 10;
+    const skip = (page - 1) * limit;
 
     const query = {};
     if (type) query.type = type;
-    if (bedrooms) query.bedrooms = bedrooms;
-    if (bathrooms) query.bathrooms = bathrooms;
-    if (floors) query.floors = floors;
-    if (carParking) query.carParking = carParking;
-    if (maxPrice) query.price = { $lte: maxPrice };
-    if (maxArea) query.area = { $lte: maxArea };
+
+    const parseOrNull = (val) => {
+      if (!val) return null;
+      if (val === "5+") return { $gte: 5 };
+      const n = Number(val);
+      return isNaN(n) ? null : n;
+    };
+
+    const bedroomsFilter = parseOrNull(bedrooms);
+    if (bedroomsFilter !== null) {
+      if (typeof bedroomsFilter === "object") query.bedrooms = bedroomsFilter;
+      else query.bedrooms = bedroomsFilter;
+    }
+
+    const bathroomsFilter = parseOrNull(bathrooms);
+    if (bathroomsFilter !== null) {
+      if (typeof bathroomsFilter === "object") query.bathrooms = bathroomsFilter;
+      else query.bathrooms = bathroomsFilter;
+    }
+
+    const floorsFilter = parseOrNull(floors);
+    if (floorsFilter !== null) {
+      if (typeof floorsFilter === "object") query.floors = floorsFilter;
+      else query.floors = floorsFilter;
+    }
+
+    const carParkingFilter = parseOrNull(carParking);
+    if (carParkingFilter !== null) {
+      if (typeof carParkingFilter === "object") query.carParking = carParkingFilter;
+      else query.carParking = carParkingFilter;
+    }
+
+    if (maxPrice) query.price = { $lte: Number(maxPrice) };
+    if (maxArea) query.area = { $lte: Number(maxArea) };
+
     if (req.query.featured === "true") query.featured = true;
 
-    const listings = await Listing.find(query);
-    res.json(listings);
+
+    const totalItems = await Listing.countDocuments(query);
+    const listings = await Listing.find(query)
+      .skip(skip)
+      .limit(limit);
+
+    res.json({
+      totalItems,
+      currentPage: page,
+      totalPages: Math.ceil(totalItems / limit),
+      items: listings,
+    });
   } catch (err) {
     console.error("Filter Error:", err);
-    res.status(500).json({ error: "Failed to fetch filtered listings" });
+    res.status(500).json({ 
+      error: "Failed to fetch filtered listings", 
+      // optional, can be removed in production
+    });
   }
 };
+
+
 
 
 export const deleteImage = async (req, res) => {
