@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { numberToCurrency } from "../pages/ListingDetail.jsx";
+import Pagination from "../components/Pagination.jsx";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3030";
 
@@ -341,33 +342,11 @@ const Listing = () => {
         )}
 
         {/* Pagination Controls */}
-        <div className="pagination-controls">
-          <button
-            onClick={() => goToPage(page - 1)}
-            disabled={page <= 1}
-            className="pagination-btn"
-          >
-            Prev
-          </button>
-
-          {[...Array(totalPages)].map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => goToPage(idx + 1)}
-              className={`pagination-btn ${page === idx + 1 ? "active" : ""}`}
-            >
-              {idx + 1}
-            </button>
-          ))}
-
-          <button
-            onClick={() => goToPage(page + 1)}
-            disabled={page >= totalPages}
-            className="pagination-btn"
-          >
-            Next
-          </button>
-        </div>
+        <Pagination
+  totalPages={totalPages}
+  currentPage={page}
+  onPageChange={goToPage}
+/>
       </main>
       <Footer />
     </div>
