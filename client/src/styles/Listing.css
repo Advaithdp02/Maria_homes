@@ -290,23 +290,7 @@
   cursor: default;
   
 }
-@media (max-width: 768px) {
-  .pagination-controls {
-    flex-wrap: nowrap;          /* Keep everything on one line */
-    overflow-x: auto;           /* Allow scrolling if needed */
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;      /* Hide scrollbar (Firefox) */
-  }
 
-  .pagination-controls::-webkit-scrollbar {
-    display: none;              /* Hide scrollbar (WebKit) */
-  }
-
-  .pagination-btn {
-    flex: 0 0 auto;              /* Prevent shrinking */
-  }
-  
-}
 .pagination-btn-next{
   padding: 8px 14px;
   border: 1px solid #ccc;
@@ -352,4 +336,31 @@
 .pagination-btn-prev:disabled {
   cursor: not-allowed;
   opacity: 0.5;
+}
+@media (max-width: 768px) {
+  .pagination-controls {
+    flex-wrap: nowrap;          /* Keep everything on one line */
+    overflow-x: auto;           /* Allow scrolling if needed */
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;      /* Hide scrollbar (Firefox) */
+  }
+
+  .pagination-controls::-webkit-scrollbar {
+    display: none;              /* Hide scrollbar (WebKit) */
+  }
+
+  .pagination-btn {
+    flex: 0 0 auto;              /* Prevent shrinking */
+  }
+  .pagination-btn-next:hover:not(:disabled) {
+  background-color: white;
+  color: black;
+  border-color: white;
+}
+.pagination-btn-prev:hover:not(:disabled) {
+  background-color: white;
+  color: black;
+  border-color: white;
+}
+  
 }
