@@ -278,3 +278,13 @@ export const getFilterRanges = async (req, res) => {
     res.status(500).json({ error: "Failed to get filter values" });
   }
 };
+export const getFullListings=async(req,res)=>{
+  try{
+    const listings= await Listing.find().sort({createdAt: -1});
+    res.json(listings);
+
+  }catch(err){
+    res.status(500).json({error:"server Error"})
+  }
+
+}

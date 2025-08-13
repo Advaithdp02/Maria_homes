@@ -15,8 +15,8 @@ const AdminPanel = () => {
   // Fetch all listings
   useEffect(() => {
     axios
-      .get(`${API_URL}/api/listings`)
-      .then((res) => setListings(res.data.items || []))
+      .get(`${API_URL}/api/listings/full`)
+      .then((res) => setListings(res.data || []))
       .catch((err) => console.error("Failed to fetch listings:", err));
   }, []);
 

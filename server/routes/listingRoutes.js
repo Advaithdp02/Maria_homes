@@ -11,12 +11,14 @@ import {
   deleteListing,
   getFeaturedListings,
   getFilterRanges,
+  getFullListings,
 } from "../controllers/listingController.js";
 
 const router = express.Router();
 const upload = multer({ storage });
 
 router.get("/", getAllListings);
+router.get("/full",getFullListings)
 router.get("/featured", getFeaturedListings);
 router.get("/:id", getListingById);
 router.get("/filtered/value", getFilteredListings);
