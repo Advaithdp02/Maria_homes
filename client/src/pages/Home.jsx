@@ -12,10 +12,10 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 // Sample data
 const testimonials = [
-  { id: 1, name: "Anjali Nair", message: "Maria Homes turned our vision into reality. Professional and timely service!", image: "/assets/profile1.webp", service: "Renovation" },
-  { id: 2, name: "Ramesh Menon", message: "Exceptional renovation work! Highly recommend their team.", image: "/assets/profile2.jpeg", service: "Renovation" },
-  { id: 3, name: "Sneha Thomas", message: "Very responsive and detailed. Loved our new villa!", image: "/assets/profile3.avif", service: "Construction" },
-  { id: 4, name: "Joseph Paul", message: "Excellent craftsmanship and transparency throughout the project.", image: "/assets/profile4.jpg", service: "Construction" },
+  { id: 1, name: "Anjali Nair", message: "Maria Homes turned our vision into reality. Professional and timely service!", image: "/assets/profilepic.jpg", service: "Renovation" },
+  { id: 2, name: "Ramesh Menon", message: "Exceptional renovation work! Highly recommend their team.", image: "/assets/profilepic.jpg", service: "Renovation" },
+  { id: 3, name: "Sneha Thomas", message: "Very responsive and detailed. Loved our new villa!", image: "/assets/profilepic.jpg", service: "Construction" },
+  { id: 4, name: "Joseph Paul", message: "Excellent craftsmanship and transparency throughout the project.", image: "/assets/profilepic.jpg", service: "Construction" },
 ];
 
 const services = [
