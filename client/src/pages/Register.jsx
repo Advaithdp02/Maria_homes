@@ -7,7 +7,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3030";
-
+const token=localStorage.getItem('token')
 const Register = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -35,13 +35,16 @@ const Register = () => {
         username,
         email,
         password,
-      });
+      },{headers: {
+    'Authorization': `Bearer ${token}`
+  }});
       console.log("Registration successful:", res.data);
       setError(""); // Clear any previous errors
 
       navigate("/admin"); // Redirect on successful registration
     } catch (err) {
       setError(err.response?.data?.error || "Registration failed");
+      console.log(token)
     }
   };
 
