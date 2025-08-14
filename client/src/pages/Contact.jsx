@@ -27,7 +27,7 @@ const ContactUs = () => {
 </button>
             <button
               className="whatsapp-btn"
-              onClick={() => window.open("https://wa.me/918075269449", "_blank")}
+              onClick={() => window.open("https://wa.me/917012791781", "_blank")}
             >
               Chat on WhatsApp
             </button>
