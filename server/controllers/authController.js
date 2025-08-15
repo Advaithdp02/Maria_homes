@@ -44,3 +44,8 @@ export const loginUser = async (req, res) => {
     res.status(500).json({ message: "Server error during login" });
   }
 };
+
+export const validateUser=(req, res) => {
+  res.json({ valid: true, user: req.user });
+}
+

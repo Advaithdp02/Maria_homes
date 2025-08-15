@@ -42,6 +42,10 @@ const AdminPanel = () => {
         <div className="admin-buttons">
           <button onClick={() => navigate("/register")}>Register User</button>
           <button onClick={() => navigate("/add-listing")}>Add Listing</button>
+          <button onClick={()=>{
+            localStorage.removeItem('token');
+            navigate('/login')
+          }}>Logout</button>
         </div>
       </div>
 
