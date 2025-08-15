@@ -3,7 +3,7 @@ import "../styles/ListingDetail.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ImageCarousel from "../components/ImageCarasoul"; 
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -21,6 +21,7 @@ export const numberToCurrency = (num) => {
 const ListingDetail = () => {
   const { id } = useParams();
   const [listing, setListing] = useState(null);
+  const navigate=useNavigate()
 
   useEffect(() => {
     axios.get(`${API_URL}/api/listings/${id}`)
@@ -82,7 +83,7 @@ const ListingDetail = () => {
       {/* Buttons */}
       <div className="contact-section">
         <p>For More Details</p>
-        <button className="contact-btn">Contact Us</button>
+        <button className="contact-btn" onClick={()=>{navigate('/contact')}}>Contact Us</button>
         <button
           className="contact-btn whatsapp"
           onClick={() => window.open("https://wa.me/917012791781", "_blank")}
