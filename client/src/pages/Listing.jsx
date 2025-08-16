@@ -7,6 +7,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { numberToCurrency } from "../pages/ListingDetail.jsx";
 import Pagination from "../components/Pagination.jsx";
+import MyRangeSlider from "../components/Slider.jsx";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3030";
 
@@ -29,27 +30,32 @@ const SkeletonCard = () => (
 const Listing = () => {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showNoListings, setShowNoListings] = useState(false); // For delayed no listings message
+  const [showNoListings, setShowNoListings] = useState(false); 
   const [activeType, setActiveType] = useState("house");
 
   // Pagination state
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const limit = 6; // Items per page
+  const limit = 6;
 
-  // Filter states
-  const [selectedBedrooms, setSelectedBedrooms] = useState("");
-  const [selectedBathrooms, setSelectedBathrooms] = useState("");
-  const [selectedFloors, setSelectedFloors] = useState("");
-  const [selectedPrice, setSelectedPrice] = useState(0);
-  const [selectedArea, setSelectedArea] = useState(0);
-  const [carParking, setCarParking] = useState("");
+  // House filter states
+  const [houseBedrooms, setHouseBedrooms] = useState("");
+  const [houseBathrooms, setHouseBathrooms] = useState("");
+  const [houseFloors, setHouseFloors] = useState("");
+  const [houseCarParking, setHouseCarParking] = useState("");
+  const [housePrice, setHousePrice] = useState([0, 0]);
+  const [houseArea, setHouseArea] = useState([0, 0]);
+
+  // Plot filter states
+  const [plotPrice, setPlotPrice] = useState([0, 0]);
+  const [plotArea, setPlotArea] = useState([0, 0]);
 
   const [priceRange, setPriceRange] = useState({ min: 0, max: 25000000 });
   const [plotFilters, setPlotFilters] = useState({
     area: { min: 0, max: 10000 },
     price: { min: 0, max: 250000000 },
   });
+  const [buttonState, setButtonState] = useState(false);
 
   const navigate = useNavigate();
 
@@ -77,31 +83,39 @@ const Listing = () => {
         setLoading(true);
         setShowNoListings(false);
 
-        // Build query params string with filters & pagination
         const params = new URLSearchParams({
           type: activeType,
           page,
           limit,
         });
 
-        if (selectedBedrooms) params.append("bedrooms", selectedBedrooms);
-        if (selectedBathrooms) params.append("bathrooms", selectedBathrooms);
-        if (selectedFloors) params.append("floors", selectedFloors);
-        if (carParking) params.append("carParking", carParking);
-        if (selectedPrice) params.append("maxPrice", selectedPrice);
-        if (selectedArea) params.append("maxArea", selectedArea);
+        // ✅ Different states for house vs plot
+        if (activeType === "house") {
+          if (houseBedrooms) params.append("bedrooms", houseBedrooms);
+          if (houseBathrooms) params.append("bathrooms", houseBathrooms);
+          if (houseFloors) params.append("floors", houseFloors);
+          if (houseCarParking) params.append("carParking", houseCarParking);
+          if (housePrice.length === 2)
+            params.append("priceRange", JSON.stringify(housePrice));
+          if (houseArea.length === 2)
+            params.append("areaRange", JSON.stringify(houseArea));
+        } else if (activeType === "plot") {
+          if (plotPrice.length === 2)
+            params.append("priceRange", JSON.stringify(plotPrice));
+          if (plotArea.length === 2)
+            params.append("areaRange", JSON.stringify(plotArea));
+        }
 
         const res = await axios.get(
           `${API_URL}/api/listings/filtered/value?${params.toString()}`
         );
-        console.log(res.data.items)
+
         setListings(res.data.items);
         setTotalPages(res.data.totalPages);
         setPage(res.data.currentPage);
 
         setLoading(false);
 
-        // If no listings, wait 1 second before showing message for smoother UI
         if (res.data.items.length === 0) {
           noListingsTimeout = setTimeout(() => {
             setShowNoListings(true);
@@ -118,26 +132,30 @@ const Listing = () => {
 
     fetchListings();
 
-    // Cleanup timeout on unmount or when dependencies change
     return () => {
       if (noListingsTimeout) clearTimeout(noListingsTimeout);
     };
   }, [
     activeType,
-    selectedBedrooms,
-    selectedBathrooms,
-    selectedFloors,
-    selectedPrice,
-    selectedArea,
-    carParking,
+    houseBedrooms,
+    houseBathrooms,
+    houseFloors,
+    houseCarParking,
+    housePrice,
+    houseArea,
+    plotPrice,
+    plotArea,
     page,
   ]);
 
-  // Change page handler
   const goToPage = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages && newPage !== page) {
       setPage(newPage);
     }
+  };
+
+  const filterOpen = () => {
+    setButtonState(!buttonState);
   };
 
   return (
@@ -173,9 +191,9 @@ const Listing = () => {
           {activeType === "house" ? (
             <>
               <select
-                value={selectedBedrooms}
+                value={houseBedrooms}
                 onChange={(e) => {
-                  setSelectedBedrooms(e.target.value);
+                  setHouseBedrooms(e.target.value);
                   setPage(1);
                 }}
               >
@@ -189,9 +207,9 @@ const Listing = () => {
               </select>
 
               <select
-                value={selectedBathrooms}
+                value={houseBathrooms}
                 onChange={(e) => {
-                  setSelectedBathrooms(e.target.value);
+                  setHouseBathrooms(e.target.value);
                   setPage(1);
                 }}
               >
@@ -205,9 +223,9 @@ const Listing = () => {
               </select>
 
               <select
-                value={selectedFloors}
+                value={houseFloors}
                 onChange={(e) => {
-                  setSelectedFloors(e.target.value);
+                  setHouseFloors(e.target.value);
                   setPage(1);
                 }}
               >
@@ -221,9 +239,9 @@ const Listing = () => {
               </select>
 
               <select
-                value={carParking}
+                value={houseCarParking}
                 onChange={(e) => {
-                  setCarParking(e.target.value);
+                  setHouseCarParking(e.target.value);
                   setPage(1);
                 }}
               >
@@ -236,55 +254,97 @@ const Listing = () => {
                 <option value="5+">5+ Car Parking</option>
               </select>
 
-              <input
-                type="range"
-                min={priceRange.min}
-                max={priceRange.max}
-                value={selectedPrice}
-                onChange={(e) => {
-                  setSelectedPrice(e.target.value);
-                  setPage(1);
-                }}
-              />
-              <span>Up to {numberToCurrency(selectedPrice)}</span>
-
-              <input
-                type="range"
-                min={plotFilters.area.min}
-                max={plotFilters.area.max}
-                value={selectedArea}
-                onChange={(e) => {
-                  setSelectedArea(e.target.value);
-                  setPage(1);
-                }}
-              />
-              <span>Min Area: {selectedArea} sq.ft</span>
+              {buttonState && (
+                <>
+                  <div>
+                    <p id="sliderRange">
+                      Price Range :{" "}
+                      {Array.isArray(housePrice)
+                        ? `${numberToCurrency(housePrice[0])} - ${numberToCurrency(housePrice[1])}`
+                        : "Select a Price range"}
+                    </p>
+                  </div>
+                  <div>
+                    <MyRangeSlider
+                      start={100000}
+                      end={25000000}
+                      min={priceRange.min}
+                      max={priceRange.max}
+                      value={housePrice}
+                      onChange={(values)=>{
+                        //write your function here
+                        console.log(`the value changed: ${values},${typeof(values[0])}`)
+                        setHousePrice(values)}}
+                      step={100000}
+                    />
+                  </div>
+                  <div>
+                    <p id="sliderRange">
+                      Select Area :{" "}
+                      {Array.isArray(houseArea)
+                        ? `${houseArea[0]} - ${houseArea[1]}`
+                        : "Select a Area range"}
+                    </p>
+                  </div>
+                  <div>
+                    <MyRangeSlider
+                      start={0}
+                      end={25000}
+                      min={plotFilters.area.min}
+                      max={plotFilters.area.max}
+                      value={houseArea}
+                      onChange={setHouseArea}
+                      step={100}
+                    />
+                  </div>
+                </>
+              )}
+              <div className="filters-arrow">
+                <button id="filterButton" onClick={filterOpen}>
+                  {buttonState ? "View Less" : "View More"}
+                </button>
+              </div>
             </>
           ) : (
             <>
-              <input
-                type="range"
-                min={plotFilters.area.min}
-                max={plotFilters.area.max}
-                value={selectedArea}
-                onChange={(e) => {
-                  setSelectedArea(e.target.value);
-                  setPage(1);
-                }}
-              />
-              <span>Min Area: {selectedArea} cent</span>
-
-              <input
-                type="range"
-                min={plotFilters.price.min}
-                max={plotFilters.price.max}
-                value={selectedPrice}
-                onChange={(e) => {
-                  setSelectedPrice(e.target.value);
-                  setPage(1);
-                }}
-              />
-              <span>Max Price: {numberToCurrency(selectedPrice)}</span>
+              <div>
+                <p id="sliderRange">
+                  Price Range :{" "}
+                  {Array.isArray(plotPrice)
+                    ? `${numberToCurrency(plotPrice[0])} - ${numberToCurrency(plotPrice[1])}`
+                    : "Select a Price range"}
+                </p>
+              </div>
+              <div>
+                <MyRangeSlider
+                  start={100000}
+                  end={25000000}
+                  min={priceRange.min}
+                  max={priceRange.max}
+                  value={plotPrice}
+                  onChange={setPlotPrice}
+                  step={100000}
+                />
+              </div>
+              <div>
+                <p id="sliderRange">
+                  Select Area :{" "}
+                  {Array.isArray(plotArea)
+                    ? `${plotArea[0]} - ${plotArea[1]}`
+                    : "Select a Area range"}
+                </p>
+              </div>
+              <div>
+                <MyRangeSlider
+                  start={0}
+                  end={25000}
+                  min={plotFilters.area.min}
+                  max={plotFilters.area.max}
+                  value={plotArea}
+                  onChange={setPlotArea}
+                  step={100}
+                />
+              </div>
             </>
           )}
         </div>
@@ -343,10 +403,10 @@ const Listing = () => {
 
         {/* Pagination Controls */}
         <Pagination
-  totalPages={totalPages}
-  currentPage={page}
-  onPageChange={goToPage}
-/>
+          totalPages={totalPages}
+          currentPage={page}
+          onPageChange={goToPage}
+        />
       </main>
       <Footer />
     </div>

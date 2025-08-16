@@ -364,3 +364,49 @@
 }
   
 }
+
+.filters-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2.5rem;
+}
+
+#sliderRange{
+  font-weight: 500;
+  font-size: 14px;
+  min-width: 120px;
+  text-align: center;
+  color: #5E503F;
+  background-color: #e2e0e0;
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px solid #363535;
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.5);
+}
+
+.filters-arrow {
+  grid-column: 1 / -1; 
+  display: flex;       
+  justify-content: center;
+  align-items: center;
+  
+}
+
+#filterButton{
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.5);
+  width: 100px;
+  height: 40px;
+  padding:0px;
+}
+
+#filterButton:hover{
+  background-color: #908d89;
+  color:whitesmoke;
+}
+
+.buttonRotate {
+  transform: rotate(180deg);
+  transition: transform 0.4s ease;
+}
+
+

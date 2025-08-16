@@ -1,0 +1,19 @@
+.range-slider .range-slider__range {
+    background-color: #534636;
+    height: 5px;
+    border-radius: 3px;
+}
+.range-slider .range-slider__thumb{
+  background-color: rgb(110, 107, 107);
+  
+  border: 2px solid #ffffff;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.5);
+}
+
+.range-slider .range-slider__thumb:hover {
+  background-color:  #353535;
+}
