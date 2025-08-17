@@ -36,7 +36,7 @@ const Listing = () => {
   // Pagination state
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const limit = 6;
+  const limit = 12;
 
   // House filter states
   const [houseBedrooms, setHouseBedrooms] = useState("");
