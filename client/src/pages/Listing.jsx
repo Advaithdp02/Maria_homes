@@ -45,34 +45,51 @@ const Listing = () => {
   const [houseCarParking, setHouseCarParking] = useState("");
   const [housePrice, setHousePrice] = useState([0, 0]);
   const [houseArea, setHouseArea] = useState([0, 0]);
+  const [housePriceRange,setHousePriceRange]=useState([0,0])
+  const [houseAreaRange,setHouseAreaRange]=useState([0,0])
+  
 
   // Plot filter states
   const [plotPrice, setPlotPrice] = useState([0, 0]);
   const [plotArea, setPlotArea] = useState([0, 0]);
+  const [plotPriceRange,setPlotPriceRange]=useState([0,0])
+  const [plotAreaRange,setPlotAreaRange]=useState([0,0])
+  
 
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 25000000 });
-  const [plotFilters, setPlotFilters] = useState({
-    area: { min: 0, max: 10000 },
-    price: { min: 0, max: 250000000 },
-  });
-  const [buttonState, setButtonState] = useState(false);
+  //Button state 
+  const [buttonState,setButtonState]=useState(false)
+  
 
   const navigate = useNavigate();
 
   // Fetch filter ranges on mount
-  useEffect(() => {
-    const fetchFilterData = async () => {
-      try {
-        const res = await axios.get(`${API_URL}/api/listings/filters/range`);
-        const data = res.data;
-        setPriceRange(data.price);
-        setPlotFilters({ area: data.area, price: data.price });
-      } catch (err) {
-        console.error("Error fetching filter values:", err);
+useEffect(() => {
+  const fetchFilterData = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/api/listings/filters/range`);
+      const data = res.data;
+
+     if (data.house) {
+        // ⬇️ THIS IS THE LINE I MEANT
+        setHousePriceRange([data.house.price.min, data.house.price.max]);
+        setHousePrice([data.house.price.min, data.house.price.max]); // ✅ initialize properly
+        setHouseAreaRange([data.house.area.min, data.house.area.max]);
+        setHouseArea([data.house.area.min, data.house.area.max]);
       }
-    };
-    fetchFilterData();
-  }, []);
+
+      if (data.plot) {
+        setPlotPriceRange([data.plot.price.min, data.plot.price.max]);
+        setPlotPrice([data.plot.price.min, data.plot.price.max]);
+        setPlotAreaRange([data.plot.area.min, data.plot.area.max]);
+        setPlotArea([data.plot.area.min, data.plot.area.max]);
+      }
+    } catch (err) {
+      console.error("Error fetching filter values:", err);
+    }
+  };
+
+  fetchFilterData();
+}, []);
 
   // Fetch listings on page, activeType or filters change
   useEffect(() => {
@@ -95,15 +112,36 @@ const Listing = () => {
           if (houseBathrooms) params.append("bathrooms", houseBathrooms);
           if (houseFloors) params.append("floors", houseFloors);
           if (houseCarParking) params.append("carParking", houseCarParking);
-          if (housePrice.length === 2)
-            params.append("priceRange", JSON.stringify(housePrice));
-          if (houseArea.length === 2)
-            params.append("areaRange", JSON.stringify(houseArea));
-        } else if (activeType === "plot") {
-          if (plotPrice.length === 2)
-            params.append("priceRange", JSON.stringify(plotPrice));
-          if (plotArea.length === 2)
-            params.append("areaRange", JSON.stringify(plotArea));
+        
+            if (housePrice.length === 2) {
+            params.append("minPrice", JSON.stringify(housePrice[0]));
+            params.append(
+              "maxPrice",
+              JSON.stringify(housePrice[1] === 0 ? housePriceRange[1] : housePrice[1])
+            );
+            }
+            if (houseArea.length === 2) {
+            params.append("minArea", JSON.stringify(houseArea[0]));
+            params.append(
+              "maxArea",
+              JSON.stringify(houseArea[1] === 0 ? houseAreaRange[1] : houseArea[1])
+            );
+            }
+          } else if (activeType === "plot") {
+            if (plotPrice.length === 2) {
+            params.append("minPrice", JSON.stringify(plotPrice[0]));
+            params.append(
+              "maxPrice",
+              JSON.stringify(plotPrice[1] === 0 ? plotPriceRange[1] : plotPrice[1])
+            );
+            }
+            if (plotArea.length === 2) {
+            params.append("minArea", JSON.stringify(plotArea[0]));
+            params.append(
+              "maxArea",
+              JSON.stringify(plotArea[1] === 0 ? plotAreaRange[1] : plotArea[1])
+            );
+            }
         }
 
         const res = await axios.get(
@@ -145,6 +183,10 @@ const Listing = () => {
     houseArea,
     plotPrice,
     plotArea,
+    housePriceRange,
+    houseAreaRange,
+    plotPriceRange,
+    plotAreaRange,
     page,
   ]);
 
@@ -266,15 +308,15 @@ const Listing = () => {
                   </div>
                   <div>
                     <MyRangeSlider
-                      start={100000}
-                      end={25000000}
-                      min={priceRange.min}
-                      max={priceRange.max}
+                      start={housePriceRange[0]}
+                      end={housePriceRange[1]}
+                      min={housePriceRange[0]}
+                      max={housePriceRange[1]}
                       value={housePrice}
                       onChange={(values)=>{
-                        //write your function here
-                        console.log(`the value changed: ${values},${typeof(values[0])}`)
-                        setHousePrice(values)}}
+                        setHousePrice(values.map(v => Number(v)));
+                        console.log(housePrice)
+                      }}
                       step={100000}
                     />
                   </div>
@@ -288,12 +330,12 @@ const Listing = () => {
                   </div>
                   <div>
                     <MyRangeSlider
-                      start={0}
-                      end={25000}
-                      min={plotFilters.area.min}
-                      max={plotFilters.area.max}
+                      start={houseArea[0]}
+                      end={houseArea[1]}
+                      min={houseAreaRange[0]}
+                      max={houseAreaRange[1]}
                       value={houseArea}
-                      onChange={setHouseArea}
+                      onChange={(values) => setHouseArea(values.map(v => Number(v)))}
                       step={100}
                     />
                   </div>
@@ -317,12 +359,12 @@ const Listing = () => {
               </div>
               <div>
                 <MyRangeSlider
-                  start={100000}
-                  end={25000000}
-                  min={priceRange.min}
-                  max={priceRange.max}
+                  start={plotPrice[0]}
+                  end={plotPrice[1]}
+                  min={plotPriceRange[0]}
+                  max={plotPriceRange[1]}
                   value={plotPrice}
-                  onChange={setPlotPrice}
+                  onChange={(values) => setPlotPrice(values.map(v => Number(v)))}
                   step={100000}
                 />
               </div>
@@ -336,12 +378,12 @@ const Listing = () => {
               </div>
               <div>
                 <MyRangeSlider
-                  start={0}
-                  end={25000}
-                  min={plotFilters.area.min}
-                  max={plotFilters.area.max}
-                  value={plotArea}
-                  onChange={setPlotArea}
+                  start={Array.isArray(plotArea) ? plotArea[0] : 0}
+                  end={Array.isArray(plotArea) ? plotArea[1] : 0}
+                  min={plotAreaRange[0]}
+                  max={plotAreaRange[1]}
+                  value={Array.isArray(plotArea) ? plotArea : [0, 0]}
+                  onChange={(values) => setPlotArea(values.map(v => Number(v)))}
                   step={100}
                 />
               </div>
@@ -358,7 +400,7 @@ const Listing = () => {
           </div>
         ) : listings.length > 0 ? (
           <div className="listings-grid">
-            <AnimatePresence mode="wait">
+            <AnimatePresence >
               {listings.map((item) => (
                 <div className="listing-card-wrapper" key={item._id}>
                   <Link to={`/listing/${item._id}`} className="card-link">

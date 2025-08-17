@@ -69,7 +69,6 @@ export const createListing = async (req, res) => {
 };
 
 export const getFilteredListings = async (req, res) => {
-   
   try {
     let {
       type,
@@ -77,10 +76,12 @@ export const getFilteredListings = async (req, res) => {
       bathrooms,
       carParking,
       floors,
+      minPrice,
       maxPrice,
+      minArea,
       maxArea,
       page,
-      limit
+      limit,
     } = req.query;
 
     page = parseInt(page) || 1;
@@ -98,34 +99,32 @@ export const getFilteredListings = async (req, res) => {
     };
 
     const bedroomsFilter = parseOrNull(bedrooms);
-    if (bedroomsFilter !== null) {
-      if (typeof bedroomsFilter === "object") query.bedrooms = bedroomsFilter;
-      else query.bedrooms = bedroomsFilter;
-    }
+    if (bedroomsFilter !== null) query.bedrooms = bedroomsFilter;
 
     const bathroomsFilter = parseOrNull(bathrooms);
-    if (bathroomsFilter !== null) {
-      if (typeof bathroomsFilter === "object") query.bathrooms = bathroomsFilter;
-      else query.bathrooms = bathroomsFilter;
-    }
+    if (bathroomsFilter !== null) query.bathrooms = bathroomsFilter;
 
     const floorsFilter = parseOrNull(floors);
-    if (floorsFilter !== null) {
-      if (typeof floorsFilter === "object") query.floors = floorsFilter;
-      else query.floors = floorsFilter;
-    }
+    if (floorsFilter !== null) query.floors = floorsFilter;
 
     const carParkingFilter = parseOrNull(carParking);
-    if (carParkingFilter !== null) {
-      if (typeof carParkingFilter === "object") query.carParking = carParkingFilter;
-      else query.carParking = carParkingFilter;
+    if (carParkingFilter !== null) query.carParking = carParkingFilter;
+
+    // ✅ Handle price range
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = Number(minPrice);
+      if (maxPrice) query.price.$lte = Number(maxPrice);
     }
 
-    if (maxPrice) query.price = { $lte: Number(maxPrice) };
-    if (maxArea) query.area = { $lte: Number(maxArea) };
+    // ✅ Handle area range
+    if (minArea || maxArea) {
+      query.area = {};
+      if (minArea) query.area.$gte = Number(minArea);
+      if (maxArea) query.area.$lte = Number(maxArea);
+    }
 
-    if (req.query.featured === "true") query.featured = true;
-
+    
 
     const totalItems = await Listing.countDocuments(query);
     const listings = await Listing.find(query)
@@ -141,12 +140,12 @@ export const getFilteredListings = async (req, res) => {
     });
   } catch (err) {
     console.error("Filter Error:", err);
-    res.status(500).json({ 
-      error: "Failed to fetch filtered listings", 
-      // optional, can be removed in production
+    res.status(500).json({
+      error: "Failed to fetch filtered listings",
     });
   }
 };
+
 
 
 
@@ -259,25 +258,34 @@ export const getFeaturedListings = async (req, res) => {
 };
 export const getFilterRanges = async (req, res) => {
   try {
-    const listings = await Listing.find();
+    const result = await Listing.aggregate([
+      {
+        $group: {
+          _id: "$type", // groups by type: "house" / "plot"
+          minPrice: { $min: "$price" },
+          maxPrice: { $max: "$price" },
+          minArea: { $min: "$area" },
+          maxArea: { $max: "$area" },
+        },
+      },
+    ]);
 
-    const prices = listings.map(l => l.price).filter(p => p != null);
-    const areas = listings.map(l => l.area).filter(a => a != null);
+    // Format into an object for frontend
+    const ranges = result.reduce((acc, item) => {
+      acc[item._id] = {
+        price: { min: item.minPrice ?? 0, max: item.maxPrice ?? 0 },
+        area: { min: item.minArea ?? 0, max: item.maxArea ?? 0 },
+      };
+      return acc;
+    }, {});
 
-    const minPrice = Math.min(...prices);
-    const maxPrice = Math.max(...prices);
-    const minArea = Math.min(...areas);
-    const maxArea = Math.max(...areas);
-
-    res.json({
-      price: { min: minPrice, max: maxPrice },
-      area: { min: minArea, max: maxArea },
-    });
+    res.json(ranges);
   } catch (err) {
     console.error("Error getting filter ranges:", err);
     res.status(500).json({ error: "Failed to get filter values" });
   }
 };
+
 export const getFullListings=async(req,res)=>{
   try{
     const listings= await Listing.find().sort({createdAt: -1});
