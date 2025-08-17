@@ -367,7 +367,7 @@
 
 .filters-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(355px, 1fr));
   gap: 2.5rem;
 }
 
